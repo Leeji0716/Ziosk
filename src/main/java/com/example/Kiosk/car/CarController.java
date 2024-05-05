@@ -42,7 +42,7 @@ public class CarController {
     @GetMapping("/calculate/{id}")
     public String calculateCar(@PathVariable("id") int id, Model model){
         Car car = this.carService.findCar(id);
-        if (car.getOutTime().equals("null")){
+        if (car.getOutTime() == null){
             carService.calculate(car);
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH시 mm분");
