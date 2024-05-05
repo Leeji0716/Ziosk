@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>내비게이션 바</title>
+</head>
+<body>
+<nav th:fragment="navbarFragment" class="h-[15vh]">
+    <div class="navbar bg-base-100">
+        <li class="nav-item">
+            <a class="btn btn-ghost text-xs" sec:authorize="isAuthenticated()" th:href="@{/user/logout}">로그아웃</a>
+        </li>
+        <div class="flex-1 justify-center">
+            <a href="/" class="btn btn-ghost text-4xl">Ziosk</a>
+        </div>
+    </div>
+</nav>
+</body>
+</html>

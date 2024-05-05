@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}" lang="en" xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>자동차 등록</title>
+</head>
+<body>
+<div layout:fragment="content" class="container">
+    <form th:object="${carForm}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <div th:replace="~{form_errors :: formErrorsFragment}"></div>
+        <div class="flex justify-center items-center gap-8">
+            <div class="flex flex-col gap-3">
+                <div class="mb-3">
+                    <label for="firstNum" class="form-label">앞 번호판</label>
+                    <input type="text" th:field="*{firstNum}" placeholder="차 앞번호를 입력해주세요." id="firstNum" class="input input-bordered w-full max-w-xs" />
+                </div>
+                <div class="mb-3">
+                    <label for="lastNum" class="form-label">뒷 번호판</label>
+                    <input type="text" th:field="*{lastNum}" placeholder="차 뒷번호를 입력해주세요." id="lastNum" class="input input-bordered w-full max-w-xs" />
+                </div>
+                <input type="submit" value="저장하기" class="btn btn-primary my-2">
+            </div>
+        </div>
+    </form>
+</div>
+</body>
+</html>

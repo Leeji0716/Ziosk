@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}" lang="en" xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>주차 정산 완료</title>
+</head>
+<body>
+<div layout:fragment="content" class="my-3">
+    <div class="flex flex-col items-center justify-center gap-3">
+        <div class="col-6 alert alert-info">
+            <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            <p><span th:text="${outTime}"></span> 까지 주차 정산 완료되었습니다.</p>
+        </div>
+        <div class="mb-4">
+            <div class="artboard artboard-horizontal phone-3 btn btn-ghost text-3xl">정산 완료!</div>
+        </div>
+        <div class="col-6">
+            <a href="/" class="btn btn-accent">시작 페이지로 이동</a>
+        </div>
+    </div>
+</div>
+</body>
+</html>

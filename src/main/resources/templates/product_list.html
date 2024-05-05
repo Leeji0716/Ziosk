@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}" lang="en" xmlns:layout="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>주문 목록</title>
+</head>
+<body>
+<div layout:fragment="content" class="col-6 h-[90vh]">
+    <div class="row my-3">
+        <div class="col-6">
+            <a th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{|/product/create|}" class="btn btn-primary">제품
+                등록하기</a>
+        </div>
+        <div class="navbar bg-base-100">
+            <div class="flex-1 justify-center">
+                <a class="btn btn-ghost text-xs" th:href="@{|/product/list|}">전체</a>
+                <div th:each="category : ${categoryList}">
+                    <a class="btn btn-ghost text-xs" th:href="@{|/product/list?categoryId=${category.id}|}" th:text="${category.name}"></a>
+                </div>
+            </div>
+            <a th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{|/category/create|}" class="btn btn-primary">카테고리 추가</a>
+        </div>
+    </div>
+    <div class="row flex justify-around flex-wrap overflow-y-auto h-[60%]">
+        <div th:each="product : ${productList}" class="col-4">
+            <a th:id="|product_${product.id}|"></a>
+            <div class="card w-96 bg-base-100 shadow-xl">
+                <figure class="px-10 pt-10">
+                    <img th:src="${product.image}" alt="Empty" class="rounded-xl" width="100" height="200"/>
+                </figure>
+                <div class="card-body items-center text-center">
+                    <h2 class="card-title" th:text="${product.productName}"></h2>
+                    <p class="card-text product-price" th:text="${product.price} + '원'"></p>
+                    <div class="card-actions">
+                        <a sec:authorize="isAnonymous()" th:href="@{|/product/select/${product.id}|}"
+                           class="btn btn-accent">담기</a>
+                        <a sec:authorize="isAuthenticated()" th:href="@{|/product/modify/${product.id}|}"
+                           class="btn btn-primary">수정</a>
+                        <a sec:authorize="isAuthenticated()" href="javascript:void(0);"
+                           th:data-uri="@{|/product/delete/${product.id}|}"
+                           class="delete btn btn-error">삭제</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="border border-green-200 border-4 rounded-lg h-[40%]">
+        <div class="navbar bg-green-50 h-[20%]">
+            <div class="justify-center">
+                <button class="btn btn-ghost text-2xl">쇼핑 카트</button>
+            </div>
+            <div class="col-6">
+                <a href="/product/reset" class="btn btn-primary">카트 비우기</a>
+            </div>
+        </div>
+        <div class="bg-green-50 overflow-auto h-[60%]">
+            <table class="table" style="max-height: 100%;">
+                <thead>
+                <tr class="text-center">
+                    <th>번호</th>
+                    <th style="width:50%">상품명</th>
+                    <th>가격</th>
+                    <th>수량</th>
+                    <th>금액</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr class="text-center product-row" th:each="select, index : ${selectList}">
+                    <td th:text="${index.index + 1}"></td>
+                    <td class="product-name" th:text="${select.productName}"></td>
+                    <td class="product-price" th:text="${select.price} + '원'"></td>
+                    <td>
+                        <a th:href="@{|/product/select/${select.id}?cnt=minus|}"
+                           class="btn btn-xs btn-outline btn-error">-</a>
+                        <span class="product-quantity" th:text="${select.quantity}"></span>
+                        <a th:href="@{|/product/select/${select.id}?cnt=plus|}"
+                           class="btn btn-xs btn-outline btn-success">+</a>
+                    </td>
+                    <td class="product-total-price" th:text="${select.price * select.quantity + '원'}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="navbar bg-green-100 h-[20%]" >
+            <div class="flex-1 justify-start">
+                <span class="text-2xl font-bold">총 상품 가격</span>
+            </div>
+            <div class="flex-1 justify-center">
+                <span id="totalPrice" class="text-2xl font-bold"></span>
+            </div>
+            <div class="col-6">
+                <button id="payButton" class="btn btn-primary">결제</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        calculateTotalPrice();
+    });
+
+    function calculateTotalPrice() {
+        var totalPrice = 0;
+        var productRows = document.querySelectorAll(".product-row");
+        productRows.forEach(function(row) {
+            var price = parseInt(row.querySelector(".product-price").innerText.replace("원", ""));
+            var quantity = parseInt(row.querySelector(".product-quantity").innerText);
+            totalPrice += price * quantity;
+        });
+        var formattedPrice = totalPrice.toLocaleString(); // 콤마를 포함한 형식으로 변환
+        document.getElementById("totalPrice").innerText = formattedPrice + "원";
+    }
+
+    document.getElementById("payButton").addEventListener("click", function() {
+        // totalPrice를 가져와서 콤마를 제거하고 숫자로 변환합니다.
+        var totalPriceString = document.getElementById("totalPrice").innerText;
+        var totalPriceNumber = parseInt(totalPriceString.replace(/,/g, ''), 10);
+
+        // IMP 객체를 이용하여 결제를 요청합니다.
+        IMP.init('imp07531670'); // 아임포트에서 발급받은 가맹점 식별코드로 초기화합니다.
+
+        event.preventDefault(); // 기본 동작(폼 전송)을 중지
+
+        var formData = {
+            totalPrice: parseInt($('#totalPrice').val()) // totalPrice 값을 정수로 변환
+        };
+
+        // 결제 요청 정보 설정
+        var payReq = {
+            pg: 'html5_inicis',
+            pay_method: 'card',
+            merchant_uid: 'merchant_' + new Date().getTime(),
+            name: '주문명:Ziosk',
+            amount: totalPriceNumber,
+            buyer_postcode: '',
+            m_redirect_url: 'http://localhost:8088/product/success' // 모바일에서 결제 완료 후 리디렉션 될 URL
+        };
+
+        // 결제 요청 수행
+        IMP.request_pay(payReq, function(response) {
+            if (response.success) {
+                console.log(response);
+                window.location.href = payReq.m_redirect_url;
+            } else {
+                alert('결제실패 : ' + response.error_msg);
+                // 결제 실패 시 추가적인 처리를 수행
+            }
+        });
+    });
+    </script>
+</div>
+</body>
+</html>

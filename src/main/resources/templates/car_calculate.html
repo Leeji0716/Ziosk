@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html layout:decorate="~{layout}" lang="en" xmlns:th="http://www.w3.org/1999/xhtml"
+      xmlns:layout="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>자동차 정산</title>
+</head>
+<body>
+<div layout:fragment="content" class="my-3">
+    <div class="flex justify-center gap-8">
+        <form action="/car/find" method="get">
+            <input type="text" name="searchNum" id="searchNum" class="grow input input-bordered" placeholder="자동차 뒷번호 입력" />
+            <button type="submit" class="btn btn-primary">찾기</button>
+        </form>
+    </div>
+    <div class="bg-green-50 my-3">
+        <table class="table">
+            <thead>
+            <tr class="text-center">
+                <th>번호</th>
+                <th>앞번호</th>
+                <th>뒷번호</th>
+                <th>정산하기</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr class="text-center product-row" th:each="car, index : ${carList}">
+                <td th:text="${index.index + 1}"></td>
+                <td th:text="${car.firstNum}"></td>
+                <td th:text="${car.lastNum}"></td>
+                <td>
+                    <a th:href="@{|/car/calculate/${car.id}|}"
+                       class="btn btn-xs btn-outline btn-primary">✓</a>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>
