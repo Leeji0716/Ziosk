@@ -140,16 +140,49 @@ public class ProductController {
 
         model.addAttribute("product", product);
         model.addAttribute("itemList", product.getItemList());
+
         return "product_detail";
     }
 
+    @GetMapping("/plus/{id}")
+    public String plusQuantity(@PathVariable("id") Integer id, HttpSession session){
+        List<Product> selectList = (List<Product>) session.getAttribute("selectList");
+        Product selectProduct = selectList.get(id);
+        for (Product product : selectList) {
+            if (product == selectProduct) {
+                product.setQuantity(product.getQuantity() + 1);
+                break;
+            }
+        }
+        this.productService.updateProduct(selectProduct);
+        session.setAttribute("selectList", selectList);
+        return String.format("redirect:/product/list#product_%s", selectProduct.getId());
+    }
+
+    @GetMapping("/minus/{id}")
+    public String minusQuantity(@PathVariable("id") Integer id, HttpSession session){
+        List<Product> selectList = (List<Product>) session.getAttribute("selectList");
+        Product selectProduct = selectList.get(id);
+        for (Product product : selectList) {
+            if (product == selectProduct) {
+                product.setQuantity(product.getQuantity() - 1);
+                if (product.getQuantity() == 0){
+                    selectList.remove(product);
+                }
+                break;
+            }
+        }
+
+        this.productService.updateProduct(selectProduct);
+        session.setAttribute("selectList", selectList);
+        return String.format("redirect:/product/list#product_%s", selectProduct.getId());
+    }
+
     @GetMapping("/select/{id}")
-    public String selectProduct(@PathVariable("id") Integer id, HttpSession session,
-                                @RequestParam(value = "cnt", defaultValue = "plus") String cnt){
+    public String selectProduct(@PathVariable("id") Integer id, HttpSession session){
         List<Product> selectList = (List<Product>) session.getAttribute("selectList");
 
         if (selectList == null) {
-            // 세션에 "selectList" 속성이 없으면 새로운 리스트 생성
             selectList = new ArrayList<>();
         }
         Product selectedProduct = this.productService.getProduct(id);
@@ -157,16 +190,10 @@ public class ProductController {
         boolean productExists = false;
 
         for (Product product : selectList) {
-            if (product.getId() == selectedProduct.getId()&&cnt.equals("plus")) {
+            if (product.getId() == selectedProduct.getId() && product.getTotal() == selectedProduct.getTotal()) {
                 product.setQuantity(product.getQuantity() + 1);
                 productExists = true;
                 break;
-            } else if (product.getId() == selectedProduct.getId()&&cnt.equals("minus")) {
-                product.setQuantity(product.getQuantity() - 1);
-                if (product.getQuantity() == 0){
-                    selectList.remove(product);
-                }
-                return String.format("redirect:/product/list#product_%s", product.getId());
             }
         }
 
@@ -187,7 +214,6 @@ public class ProductController {
             selectList.clear(); // 리스트 내의 모든 항목을 지움
         }
         List<Product> productList = productService.getList();
-
 
         for (Product product : productList){
             List<Item> itemList = itemService.getList(product);

@@ -71,10 +71,10 @@
                     <td class="product-name" th:text="${select.productName}"></td>
                     <td class="product-price" th:text="${select.total} + '원'"></td>
                     <td>
-                        <a th:href="@{|/product/select/${select.id}?cnt=minus|}"
+                        <a th:href="@{|/product/minus/${index.index}|}"
                            class="btn btn-xs btn-outline btn-error">-</a>
                         <span class="product-quantity" th:text="${select.quantity}"></span>
-                        <a th:href="@{|/product/select/${select.id}?cnt=plus|}"
+                        <a th:href="@{|/product/plus/${index.index}|}"
                            class="btn btn-xs btn-outline btn-success">+</a>
                     </td>
                     <td class="product-total-price" th:text="${select.total * select.quantity + '원'}"></td>
