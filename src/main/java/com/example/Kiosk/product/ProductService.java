@@ -67,4 +67,8 @@ public class ProductService {
         return itemRepository.findByProduct(product);
     }
 
+    public void updateProduct(Product product) {
+        productRepository.save(product);
+    }
+
 }

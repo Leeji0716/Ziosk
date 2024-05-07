@@ -20,4 +20,6 @@ public class Item {
 
     @ManyToOne
     private Product product;
+
+    private int quantity;
 }

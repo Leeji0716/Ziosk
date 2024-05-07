@@ -31,4 +31,6 @@ public class Product {
 
     @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE)
     private List<Item> itemList;
+
+    private int total;
 }

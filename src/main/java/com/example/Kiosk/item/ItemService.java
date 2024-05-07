@@ -40,4 +40,8 @@ public class ItemService {
     public void delete(Item item){
         this.itemRepository.delete(item);
     }
+
+    public void updateItem(Item item) {
+        itemRepository.save(item);
+    }
 }

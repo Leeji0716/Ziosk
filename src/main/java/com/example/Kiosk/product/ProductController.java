@@ -139,8 +139,7 @@ public class ProductController {
         Product product = this.productService.getProduct(id);
 
         model.addAttribute("product", product);
-
-//        return String.format("redirect:/product/select/" + id);
+        model.addAttribute("itemList", product.getItemList());
         return "product_detail";
     }
 
@@ -186,6 +185,18 @@ public class ProductController {
         List<Object> selectList = (List<Object>) session.getAttribute("selectList");
         if (selectList != null && !selectList.isEmpty()){
             selectList.clear(); // 리스트 내의 모든 항목을 지움
+        }
+        List<Product> productList = productService.getList();
+
+
+        for (Product product : productList){
+            List<Item> itemList = itemService.getList(product);
+            for (Item item : itemList){
+                item.setQuantity(0);
+                this.itemService.updateItem(item);
+            }
+            product.setTotal(0);
+            this.productService.updateProduct(product);
         }
 
         return "redirect:/product/list";

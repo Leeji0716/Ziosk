@@ -2,17 +2,17 @@ package com.example.Kiosk.item;
 
 import com.example.Kiosk.product.Product;
 import com.example.Kiosk.product.ProductService;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @RequestMapping("/item")
@@ -43,9 +43,6 @@ public class ItemController {
             }
             return "redirect:/product/modify/" + product.getId();
         }
-//        if (bindingResult.hasErrors()) {
-//
-//        }
 
         this.itemService.create(itemForm.getContent(), itemForm.getItemPrice(), product);
         return "redirect:/product/modify/" + product.getId();
@@ -58,5 +55,41 @@ public class ItemController {
         this.itemService.delete(item);
         return "redirect:/product/modify/" + product.getId();
     }
+
+    @GetMapping("/plus/{id}")
+    public String plusQuantity(@PathVariable("id") Integer id){
+        Item item = this.itemService.getItem(id);
+
+        item.setQuantity(item.getQuantity() + 1);
+        this.itemService.updateItem(item);
+        return "redirect:/product/detail/" + item.getProduct().getId();
+    }
+
+    @GetMapping("/minus/{id}")
+    public String minusQuantity(@PathVariable("id") Integer id){
+        Item item = this.itemService.getItem(id);
+
+        item.setQuantity(item.getQuantity() - 1);
+        if (item.getQuantity() < 0){
+            item.setQuantity(0);
+        }
+        this.itemService.updateItem(item);
+        return "redirect:/product/detail/" + item.getProduct().getId();
+    }
+
+    @GetMapping("/select/{id}")
+    public String selectItem(@PathVariable("id") Integer id, @RequestParam(value = "totalPrice", defaultValue = "") String totalPrice){
+        System.out.println("total : " + totalPrice);
+        Product product = this.productService.getProduct(id);
+
+        int total = Integer.parseInt(totalPrice);
+
+        if (total > 0){
+            product.setTotal(total);
+        }
+        this.productService.updateProduct(product);
+        return "redirect:/product/select/" + product.getId();
+    }
+
 
 }
