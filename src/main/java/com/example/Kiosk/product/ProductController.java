@@ -125,11 +125,6 @@ public class ProductController {
         }
 
         Category category = this.categoryService.getCategory(categoryId);
-//        if (category == null) {
-//            // 해당 ID에 해당하는 카테고리가 없는 경우
-//            bindingResult.rejectValue("categoryID", "category.error", "유효하지 않은 카테고리입니다.");
-//            return "product_form";
-//        }
 
         this.productService.modify(product, productForm.getProduct(), productForm.getPrice(), productForm.getImage(), category);
         return "redirect:/product/list";
