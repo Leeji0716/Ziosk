@@ -33,7 +33,7 @@
                     <h2 class="card-title" th:text="${product.productName}"></h2>
                     <p class="card-text product-price" th:text="${product.price} + '원'"></p>
                     <div class="card-actions">
-                        <a sec:authorize="isAnonymous()" th:href="@{|/product/select/${product.id}|}"
+                        <a sec:authorize="isAnonymous()" th:href="@{|/product/detail/${product.id}|}"
                            class="btn btn-accent">담기</a>
                         <a sec:authorize="isAuthenticated()" th:href="@{|/product/modify/${product.id}|}"
                            class="btn btn-primary">수정</a>
@@ -113,11 +113,10 @@
     }
 
     document.getElementById("payButton").addEventListener("click", function() {
-        // totalPrice를 가져와서 콤마를 제거하고 숫자로 변환합니다.
+        // totalPrice를 가져와서 콤마를 제거하고 숫자로 변환
         var totalPriceString = document.getElementById("totalPrice").innerText;
         var totalPriceNumber = parseInt(totalPriceString.replace(/,/g, ''), 10);
 
-        // IMP 객체를 이용하여 결제를 요청합니다.
         IMP.init('imp07531670'); // 아임포트에서 발급받은 가맹점 식별코드로 초기화합니다.
 
         event.preventDefault(); // 기본 동작(폼 전송)을 중지

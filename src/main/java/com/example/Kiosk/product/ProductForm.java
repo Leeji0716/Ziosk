@@ -1,11 +1,14 @@
 package com.example.Kiosk.product;
 
 import com.example.Kiosk.category.Category;
+import com.example.Kiosk.item.Item;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter

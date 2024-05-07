@@ -3,6 +3,8 @@ package com.example.Kiosk.product;
 import com.example.Kiosk.category.Category;
 import com.example.Kiosk.category.CategoryRepository;
 import com.example.Kiosk.domain.DataNotFoundException;
+import com.example.Kiosk.item.Item;
+import com.example.Kiosk.item.ItemRepository;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.query.Order;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ import java.util.Optional;
 public class ProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final ItemRepository itemRepository;
 
     public List<Product> getList(){
         List<Product> productList = productRepository.findAll();
@@ -58,6 +61,10 @@ public class ProductService {
 
     public void delete(Product product){
         this.productRepository.delete(product);
+    }
+
+    public List<Item> getItemsForProduct(Product product){
+        return itemRepository.findByProduct(product);
     }
 
 }

@@ -1,9 +1,12 @@
 package com.example.Kiosk.product;
 
 import com.example.Kiosk.category.Category;
+import com.example.Kiosk.item.Item;
 import lombok.Getter;
 import lombok.Setter;
 import jakarta.persistence.*;
+
+import java.util.List;
 
 
 @Entity
@@ -25,4 +28,7 @@ public class Product {
 
     @ManyToOne
     private Category category;
+
+    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE)
+    private List<Item> itemList;
 }

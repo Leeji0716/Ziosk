@@ -2,19 +2,18 @@ package com.example.Kiosk.product;
 
 import com.example.Kiosk.category.Category;
 import com.example.Kiosk.category.CategoryService;
+import com.example.Kiosk.item.Item;
+import com.example.Kiosk.item.ItemForm;
+import com.example.Kiosk.item.ItemService;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,20 +25,17 @@ import java.util.List;
 public class ProductController {
     private final ProductService productService;
     private final CategoryService categoryService;
-
+    private final ItemService itemService;
 
     @GetMapping("/list")
-    public String list(Model model, HttpSession session, @RequestParam(value = "categoryId", defaultValue = "0") int categoryId){
-        List<Product> selectList = (List<Product>) session.getAttribute("selectList");
+    public String list(Model model, @RequestParam(value = "categoryId", defaultValue = "0") int categoryId){
         List<Category> categoryList = categoryService.getList();
         List<Product> productList = new ArrayList<>();
 
         if (categoryId == 0){
             productList = productService.getList();
             if (productList.isEmpty()){
-                Category category = this.categoryService.getCategory(1);
-                productService.create("아이스 아메리카노", "2000", "https://i.imgur.com/vXFaLmp.png", category);
-                return "redirect:/product/list";
+                return "redirect:/product/create";
             }
         }else {
             for (Category category : categoryList) {
@@ -58,14 +54,16 @@ public class ProductController {
     }
 
     @GetMapping("/create")
-    public String ProductCreate(ProductForm productForm, Model model){
+    public String ProductCreate(ProductForm productForm, ItemForm itemForm, Model model){
         List<Category> categoryList = this.categoryService.getList(); // 모든 카테고리를 가져옴
         model.addAttribute("categoryList", categoryList); // 카테고리 목록을 모델에 추가
         return "product_form";
     }
 
     @PostMapping("/create")
-    public String ProductCreate(@Valid ProductForm productForm, BindingResult bindingResult){ //폼 바인딩
+    public String ProductCreate(@Valid ProductForm productForm, BindingResult bindingResult, Model model){ //폼 바인딩
+        List<Category> categoryList = this.categoryService.getList(); // 모든 카테고리를 가져옴
+        model.addAttribute("categoryList", categoryList); // 카테고리 목록을 모델에 추가
         if (bindingResult.hasErrors()){
             return "product_form";
         }
@@ -84,19 +82,17 @@ public class ProductController {
 
     @PreAuthorize("isAuthenticated()")
     @GetMapping("/modify/{id}")
-    public String productModify(ProductForm productForm, @PathVariable("id") Integer id, Model model){
-        // 제품 정보 가져오기
+    public String productModify(ProductForm productForm, ItemForm itemForm, @PathVariable("id") Integer id, Model model){
         Product product = productService.getProduct(id);
-
-        // 모든 카테고리 가져오기
         List<Category> categoryList = categoryService.getList();
 
-        // 제품의 카테고리 ID 가져오기
         int categoryId = product.getCategory().getId();
 
-        // 모델에 추가
         model.addAttribute("categoryList", categoryList);
         model.addAttribute("categoryId", categoryId);
+
+        List<Item> itemList = this.itemService.getList(product);
+        model.addAttribute("itemList", itemList);
 
         productForm.setProduct(product.getProductName());
         productForm.setPrice(String.valueOf(product.getPrice()));
@@ -136,6 +132,16 @@ public class ProductController {
         Product product = this.productService.getProduct(id);
         this.productService.delete(product);
         return "redirect:/product/list";
+    }
+
+    @GetMapping("/detail/{id}")
+    public String detailProduct(@PathVariable("id") Integer id, Model model){
+        Product product = this.productService.getProduct(id);
+
+        model.addAttribute("product", product);
+
+//        return String.format("redirect:/product/select/" + id);
+        return "product_detail";
     }
 
     @GetMapping("/select/{id}")
