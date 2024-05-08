@@ -14,14 +14,13 @@ import java.util.Optional;
 public class ItemService {
 
     private final ItemRepository itemRepository;
-    public String create(String content, String price, Product product){
+    public void create(String content, String price, Product product){
         Item item = new Item();
         item.setContent(content);
         item.setPrice(Integer.parseInt(price));
         item.setProduct(product);
 
         itemRepository.save(item);
-        return "redirect:/product/list";
     }
 
     public List<Item> getList(Product product){

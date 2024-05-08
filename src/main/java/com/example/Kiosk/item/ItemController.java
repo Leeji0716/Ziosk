@@ -79,7 +79,6 @@ public class ItemController {
 
     @GetMapping("/select/{id}")
     public String selectItem(@PathVariable("id") Integer id, @RequestParam(value = "totalPrice", defaultValue = "") String totalPrice){
-        System.out.println("total : " + totalPrice);
         Product product = this.productService.getProduct(id);
 
         int total = Integer.parseInt(totalPrice);

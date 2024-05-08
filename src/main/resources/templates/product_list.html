@@ -78,6 +78,9 @@
                            class="btn btn-xs btn-outline btn-success">+</a>
                     </td>
                     <td class="product-total-price" th:text="${select.total * select.quantity + '원'}"></td>
+                    <td>
+                        <a th:href="@{|/product/show/${index.index}|}" class="btn btn-xs btn-outline btn-success">+</a>
+                    </td>
                 </tr>
                 </tbody>
             </table>

@@ -144,6 +144,24 @@ public class ProductController {
         return "product_detail";
     }
 
+    @GetMapping("/show/{id}")
+    public String showSelect(@PathVariable("id") Integer id, Model model, HttpSession session){
+        List<Product> selectList = (List<Product>) session.getAttribute("selectList");
+        Product product = selectList.get(id);
+        List<Product> productList = this.productService.getList();
+        List<Item> itemList = new ArrayList<>();
+        for (Product target : productList){
+            if (target.getId() == product.getId()){
+                itemList = target.getItemList();
+                break;
+            }
+        }
+        model.addAttribute("product", product);
+        model.addAttribute("itemList", itemList);
+
+        return "product_detail";
+    }
+
     @GetMapping("/plus/{id}")
     public String plusQuantity(@PathVariable("id") Integer id, HttpSession session){
         List<Product> selectList = (List<Product>) session.getAttribute("selectList");
