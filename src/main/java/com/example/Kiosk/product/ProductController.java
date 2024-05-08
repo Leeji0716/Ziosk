@@ -32,13 +32,10 @@ public class ProductController {
         List<Category> categoryList = categoryService.getList();
         List<Product> productList = new ArrayList<>();
 
-        if (categoryId == 0){
-            productList = productService.getList();
-            if (productList.isEmpty()){
-                return "redirect:/product/create";
-            }
-        }else {
-            for (Category category : categoryList) {
+        for (Category category : categoryList){
+            if (categoryId == 0){
+                productList.addAll(category.getProductList());
+            }else {
                 if (categoryId == category.getId()){
                     productList = productService.getCategoryList(categoryId);
                     break;
