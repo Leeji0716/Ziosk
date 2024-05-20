@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
+    <!-- iamport.payment.js -->
+</head>
+<body>
+<div id="personInfo"></div>
+<button onclick="test();">aaa</button>
+<script>
+
+    function test() {
+    $.ajax({
+      type: "GET",
+      url: "http://localhost:8088/ajax-test", // 카트를 비우는 엔드포인트
+      success: function(response) {
+        console.log(response);
+        console.log(response.name);
+
+        renderPerson(response);
+
+      },
+      error: function(xhr, status, error) {
+        // 요청이 실패했을 때 실행될 함수
+        console.error("카트를 비우는데 실패했습니다.");
+      }
+    });
+    }
+
+
+    function renderPerson(person) {
+        const info = document.getElementById("personInfo");
+
+        info.innerHTML = "<div>" + person.name + "</div>";
+        info.innerHTML += "<div>" + person.age + "</div>";
+    }
+</script>
+</body>
+</html>

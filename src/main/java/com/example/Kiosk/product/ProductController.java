@@ -193,6 +193,7 @@ public class ProductController {
         return String.format("redirect:/product/list#product_%s", selectProduct.getId());
     }
 
+
     @GetMapping("/select/{id}")
     public String selectProduct(@PathVariable("id") Integer id, HttpSession session){
         List<Product> selectList = (List<Product>) session.getAttribute("selectList");
