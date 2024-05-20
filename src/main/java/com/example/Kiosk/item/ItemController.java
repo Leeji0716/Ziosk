@@ -78,10 +78,10 @@ public class ItemController {
     }
 
     @GetMapping("/select/{id}")
-    public String selectItem(@PathVariable("id") Integer id, @RequestParam(value = "totalPrice", defaultValue = "") String totalPrice){
+    public String selectItem(@PathVariable("id") Integer id, @RequestParam(value = "orderPrice", defaultValue = "") String orderPrice){
         Product product = this.productService.getProduct(id);
 
-        int total = Integer.parseInt(totalPrice);
+        int total = Integer.parseInt(orderPrice);
 
         if (total > 0){
             product.setTotal(total);

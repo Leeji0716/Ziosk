@@ -9,8 +9,7 @@
 <div layout:fragment="content" class="col-6 h-[90vh]">
     <div class="row my-3 h-[5%]">
         <div class="col-6">
-            <a th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{|/product/create|}" class="btn btn-primary">제품
-                등록하기</a>
+            <a th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{|/product/create|}" class="btn btn-primary">제품 등록하기</a>
         </div>
         <div class="navbar bg-base-100">
             <div class="flex-1 justify-center">
@@ -33,19 +32,14 @@
                     <h2 class="card-title" th:text="${product.productName}"></h2>
                     <p class="card-text product-price" th:text="${product.price} + '원'"></p>
                     <div class="card-actions">
-                        <a sec:authorize="isAnonymous()" th:href="@{|/product/detail/${product.id}|}"
-                           class="btn btn-primary">담기</a>
-                        <button class="btn btn-accent" th:attr="onclick='openModal(\'' + ${product.id} + '\')'">담기</button>
-                        <a sec:authorize="isAuthenticated()" th:href="@{|/product/modify/${product.id}|}"
-                           class="btn btn-primary">수정</a>
-                        <a sec:authorize="isAuthenticated()" href="javascript:void(0);"
-                           th:data-uri="@{|/product/delete/${product.id}|}"
-                           class="delete btn btn-error">삭제</a>
+                        <button sec:authorize="isAnonymous()" class="btn btn-accent" th:attr="onclick='openModal(\'' + ${product.id} + '\')'">담기</button>
+                        <a sec:authorize="isAuthenticated()" th:href="@{|/product/modify/${product.id}|}" class="btn btn-primary">수정</a>
+                        <a sec:authorize="isAuthenticated()" href="javascript:void(0);" th:data-uri="@{|/product/delete/${product.id}|}" class="delete btn btn-error">삭제</a>
                     </div>
                 </div>
 
                 <!-- 각 제품에 대한 모달 -->
-                <dialog th:id="@{|my_modal_${product.id}|}" class="modal modal-large">
+                <dialog th:id="@{|my_modal_${product.id}|}" class="modal">
                     <div class="modal-box w-[800px] max-w-5xl">
                         <div class="flex justify-center">
                             <div class="card w-96 bg-base-100 shadow-xl">
@@ -63,7 +57,7 @@
                                     <th>번호</th>
                                     <th style="width:50%">항목</th>
                                     <th>가격</th>
-                                    <th>정산하기</th>
+                                    <th>수량</th>
                                 </tr>
                                 </thead>
                                 <tbody>
@@ -72,27 +66,24 @@
                                     <td th:text="${item.content}"></td>
                                     <td class="item-price" th:text="${item.price} + '원'"></td>
                                     <td>
-                                        <a th:href="@{|/item/minus/${item.id}|}"
-                                           class="btn btn-xs btn-outline btn-error">-</a>
-                                        <span class="item-quantity" th:text="${item.quantity}"></span>
-                                        <a th:href="@{|/item/plus/${item.id}|}"
-                                           class="btn btn-xs btn-outline btn-success">+</a>
+                                        <a th:href="@{|/item/minus/${item.id}|}" class="btn btn-xs btn-outline btn-error">-</a>
+                                        <span class="item-quantity" th:id="@{|itemQuantity_${index.index}|}"></span>
+                                        <a th:href="@{|/item/plus/${item.id}|}" class="btn btn-xs btn-outline btn-success">+</a>
                                     </td>
                                 </tr>
                                 </tbody>
                             </table>
                         </div>
-                        <div class="navbar bg-green-100 h-[20%]" >
+                        <div class="navbar bg-green-100 h-[20%]">
                             <div class="flex-1 justify-start">
                                 <span class="text-2xl font-bold">총 가격</span>
                             </div>
                             <div class="flex-1 justify-center">
-                                <span id="totalPrice2" class="text-2xl font-bold"></span>
-                                <span class="text-2xl font-bold" th:text="${totalPrice2}"></span>
+                                <span id="orderPrice" class="text-2xl font-bold"></span>
+                                <span class="text-2xl font-bold" th:text="${orderPrice}"></span>
                             </div>
                             <div class="col-6">
-                                <a sec:authorize="isAnonymous()" id="add-item" class="btn btn-accent"
-                                   th:data-pid="${product.id}">담기</a>
+                                <a sec:authorize="isAnonymous()" class="btn btn-accent" th:data-pid="${product.id}" th:id="@{|add-item_${product.id}|}">담기</a>
                             </div>
                         </div>
                         <div class="modal-action col-6">
@@ -131,13 +122,11 @@
                     <td class="product-name" th:text="${select.productName}"></td>
                     <td class="product-price" th:text="${select.total} + '원'"></td>
                     <td>
-                        <a th:href="@{|/product/minus/${index.index}|}"
-                           class="btn btn-xs btn-outline btn-error">-</a>
-                        <span class="product-quantity" th:text="${select.quantity}"></span>
-                        <a th:href="@{|/product/plus/${index.index}|}"
-                           class="btn btn-xs btn-outline btn-success">+</a>
+                        <button onclick="decreaseQuantity('${select.index}')" class="btn btn-xs btn-outline btn-error">-</button> <!-- -버튼 -->
+                        <span id="quantity_${select.index}">0</span> <!-- 수량 표시 -->
+                        <button onclick="increaseQuantity('${select.index}')" class="btn btn-xs btn-outline btn-success">+</button> <!-- +버튼 -->
                     </td>
-                    <td class="product-total-price" th:text="${select.total * select.quantity + '원'}"></td>
+                    <td th:text="${select.price * select.quantity + '원'}"></td>
                     <td>
                         <a th:href="@{|/product/show/${index.index}|}" class="btn btn-xs btn-outline btn-success">+</a>
                     </td>
@@ -146,7 +135,7 @@
             </table>
         </div>
 
-        <div class="navbar bg-green-100 h-[20%]" >
+        <div class="navbar bg-green-100 h-[20%]">
             <div class="flex-1 justify-start">
                 <span class="text-2xl font-bold">총 상품 가격</span>
             </div>
@@ -159,17 +148,53 @@
         </div>
     </div>
     <script>
+        // -버튼 클릭 시
+        function decreaseQuantity(selectIndex) {
+            var quantityElement = document.getElementById('quantity_' + selectIndex);
+            var currentQuantity = parseInt(quantityElement.innerText);
+
+            if (currentQuantity > 0) {
+                currentQuantity -= 1; // 현재 수량에서 1을 빼기
+                quantityElement.innerText = currentQuantity; // 업데이트된 수량을 화면에 표시
+            }
+        }
+
+        // +버튼 클릭 시
+        function increaseQuantity(selectIndex) {
+            var quantityElement = document.getElementById('quantity_' + selectIndex);
+            var currentQuantity = parseInt(quantityElement.innerText);
+
+            currentQuantity += 1; // 현재 수량에 1을 더하기
+            quantityElement.innerText = currentQuantity; // 업데이트된 수량을 화면에 표시
+        }
+
         function openModal(productId) {
             var modal = document.getElementById('my_modal_' + productId);
             modal.showModal();
+            calculateOrderPrice(productId); // 모달을 열 때 주문 가격 계산
         }
 
         function closeModal(productId) {
             var modal = document.getElementById('my_modal_' + productId);
             modal.close();
         }
-    </script>
-    <script>
+
+        function calculateOrderPrice(productId) {
+            var modal = document.getElementById('my_modal_' + productId);
+            var productPrice = parseFloat(modal.querySelector(".product-price").innerText.replace("원", "")) || 0;
+            var orderPrice = productPrice;
+
+            var itemRows = modal.querySelectorAll(".item-row");
+            itemRows.forEach(function(row) {
+                var price = parseInt(row.querySelector(".item-price").innerText.replace("원", "")) || 0;
+                var quantity = parseInt(row.querySelector(".item-quantity").innerText) || 0;
+                orderPrice += price * quantity;
+            });
+            var formattedPrice = orderPrice.toLocaleString(); // 콤마를 포함한 형식으로 변환
+            modal.querySelector("#orderPrice").innerText = formattedPrice + "원";
+            modal.querySelector(".btn-accent").dataset.orderPrice = orderPrice;
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             calculateTotalPrice();
         });
@@ -178,15 +203,24 @@
             var totalPrice = 0;
             var productRows = document.querySelectorAll(".product-row");
             productRows.forEach(function(row) {
-                var price = parseInt(row.querySelector(".product-price").innerText.replace("원", ""));
-                var quantity = parseInt(row.querySelector(".product-quantity").innerText);
+                var price = parseInt(row.querySelector(".product-price").innerText.replace("원", "")) || 0;
+                var quantity = parseInt(row.querySelector(".product-quantity").innerText) || 0;
                 totalPrice += price * quantity;
             });
             var formattedPrice = totalPrice.toLocaleString(); // 콤마를 포함한 형식으로 변환
             document.getElementById("totalPrice").innerText = formattedPrice + "원";
         }
 
-        document.getElementById("payButton").addEventListener("click", function() {
+        document.querySelectorAll("[id^='add-item_']").forEach(function(elem) {
+            elem.addEventListener("click", function(e){
+                e.preventDefault();
+                const pid = e.target.dataset.pid;
+                const price = e.target.dataset.orderPrice;
+                location.href = `/item/select/${pid}?orderPrice=${price}`;
+            });
+        });
+
+        document.getElementById("payButton").addEventListener("click", function(event) {
             // totalPrice를 가져와서 콤마를 제거하고 숫자로 변환
             var totalPriceString = document.getElementById("totalPrice").innerText;
             var totalPriceNumber = parseInt(totalPriceString.replace(/,/g, ''), 10);
@@ -194,10 +228,6 @@
             IMP.init('imp07531670'); // 아임포트에서 발급받은 가맹점 식별코드로 초기화합니다.
 
             event.preventDefault(); // 기본 동작(폼 전송)을 중지
-
-            var formData = {
-                totalPrice: parseInt($('#totalPrice').val()) // totalPrice 값을 정수로 변환
-            };
 
             // 결제 요청 정보 설정
             var payReq = {

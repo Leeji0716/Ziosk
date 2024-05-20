@@ -70,5 +70,4 @@ public class ProductService {
     public void updateProduct(Product product) {
         productRepository.save(product);
     }
-
 }
