@@ -7,7 +7,7 @@
 </head>
 <body>
 <div layout:fragment="content" class="col-6 h-[90vh]">
-    <div class="row my-3">
+    <div class="row my-3 h-[5%]">
         <div class="col-6">
             <a th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{|/product/create|}" class="btn btn-primary">제품
                 등록하기</a>

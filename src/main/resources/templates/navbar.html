@@ -5,7 +5,7 @@
     <title>내비게이션 바</title>
 </head>
 <body>
-<nav th:fragment="navbarFragment" class="h-[15vh]">
+<nav th:fragment="navbarFragment" class="h-[10vh]">
     <div class="navbar bg-base-100">
         <li class="nav-item">
             <a class="btn btn-ghost text-xs" sec:authorize="isAuthenticated()" th:href="@{/user/logout}">로그아웃</a>
