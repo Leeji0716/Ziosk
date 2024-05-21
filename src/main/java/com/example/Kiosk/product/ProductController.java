@@ -162,40 +162,39 @@ public class ProductController {
         return "product_detail";
     }
 
-    @GetMapping("/plus/{id}")
-    public String plusQuantity(@PathVariable("id") Integer id, HttpSession session){
-        List<Product> selectList = (List<Product>) session.getAttribute("selectList");
-        Product selectProduct = selectList.get(id);
-        for (Product product : selectList) {
-            if (product == selectProduct) {
-                product.setQuantity(product.getQuantity() + 1);
-                break;
-            }
-        }
-        this.productService.updateProduct(selectProduct);
-        session.setAttribute("selectList", selectList);
-        return String.format("redirect:/product/list#product_%s", selectProduct.getId());
-    }
-
-    @GetMapping("/minus/{id}")
-    public String minusQuantity(@PathVariable("id") Integer id, HttpSession session){
-        List<Product> selectList = (List<Product>) session.getAttribute("selectList");
-        Product selectProduct = selectList.get(id);
-        for (Product product : selectList) {
-            if (product == selectProduct) {
-                product.setQuantity(product.getQuantity() - 1);
-                if (product.getQuantity() == 0){
-                    selectList.remove(product);
-                }
-                break;
-            }
-        }
-
-        this.productService.updateProduct(selectProduct);
-        session.setAttribute("selectList", selectList);
-        return String.format("redirect:/product/list#product_%s", selectProduct.getId());
-    }
-
+//    @GetMapping("/plus/{id}")
+//    public String plusQuantity(@PathVariable("id") Integer id, HttpSession session){
+//        List<Product> selectList = (List<Product>) session.getAttribute("selectList");
+//        Product selectProduct = selectList.get(id);
+//        for (Product product : selectList) {
+//            if (product == selectProduct) {
+//                product.setQuantity(product.getQuantity() + 1);
+//                break;
+//            }
+//        }
+//        this.productService.updateProduct(selectProduct);
+//        session.setAttribute("selectList", selectList);
+//        return String.format("redirect:/product/list#product_%s", selectProduct.getId());
+//    }
+//
+//    @GetMapping("/minus/{id}")
+//    public String minusQuantity(@PathVariable("id") Integer id, HttpSession session){
+//        List<Product> selectList = (List<Product>) session.getAttribute("selectList");
+//        Product selectProduct = selectList.get(id);
+//        for (Product product : selectList) {
+//            if (product == selectProduct) {
+//                product.setQuantity(product.getQuantity() - 1);
+//                if (product.getQuantity() == 0){
+//                    selectList.remove(product);
+//                }
+//                break;
+//            }
+//        }
+//
+//        this.productService.updateProduct(selectProduct);
+//        session.setAttribute("selectList", selectList);
+//        return String.format("redirect:/product/list#product_%s", selectProduct.getId());
+//    }
 
     @GetMapping("/select/{id}")
     public String selectProduct(@PathVariable("id") Integer id, HttpSession session){
@@ -252,22 +251,22 @@ public class ProductController {
         return "success_form";
     }
 
-    @GetMapping("/updateQuantity/{id}/{quantity}")
-    @ResponseBody
-    public Map<String, Object> updateQuantity(@PathVariable("id") Integer id, @PathVariable("quantity") Integer quantity, HttpSession session) {
-        List<Object> selectList = (List<Object>) session.getAttribute("selectList");
-        Product product = (Product) selectList.get(id);
-        product.setQuantity(quantity);
-        // 여기에 수량 업데이트 로직을 구현합니다.
-        // id를 사용하여 해당 제품의 정보를 가져오고, 수량을 업데이트합니다.
-
-        // 임시적으로 가격을 계산하여 반환하도록 하겠습니다.
-        int total = quantity * product.getPrice(); // 가격 계산 예시: 수량 * 1000
-
-        // 업데이트된 가격을 포함한 응답을 생성합니다.
-        Map<String, Object> response = new HashMap<>();
-        response.put("total", total);
-
-        return response;
-    }
+//    @GetMapping("/updateQuantity/{id}/{quantity}")
+//    @ResponseBody
+//    public Map<String, Object> updateQuantity(@PathVariable("id") Integer id, @PathVariable("quantity") Integer quantity, HttpSession session) {
+//        List<Object> selectList = (List<Object>) session.getAttribute("selectList");
+//        Product product = (Product) selectList.get(id);
+//        product.setQuantity(quantity);
+//        // 여기에 수량 업데이트 로직을 구현합니다.
+//        // id를 사용하여 해당 제품의 정보를 가져오고, 수량을 업데이트합니다.
+//
+//        // 임시적으로 가격을 계산하여 반환하도록 하겠습니다.
+//        int total = quantity * product.getPrice(); // 가격 계산 예시: 수량 * 1000
+//
+//        // 업데이트된 가격을 포함한 응답을 생성합니다.
+//        Map<String, Object> response = new HashMap<>();
+//        response.put("total", total);
+//
+//        return response;
+//    }
 }
