@@ -55,39 +55,4 @@ public class ItemController {
         this.itemService.delete(item);
         return "redirect:/product/modify/" + product.getId();
     }
-
-    @GetMapping("/plus/{id}")
-    public String plusQuantity(@PathVariable("id") Integer id){
-        Item item = this.itemService.getItem(id);
-
-        item.setQuantity(item.getQuantity() + 1);
-        this.itemService.updateItem(item);
-        return "redirect:/product/detail/" + item.getProduct().getId();
-    }
-
-    @GetMapping("/minus/{id}")
-    public String minusQuantity(@PathVariable("id") Integer id){
-        Item item = this.itemService.getItem(id);
-
-        item.setQuantity(item.getQuantity() - 1);
-        if (item.getQuantity() < 0){
-            item.setQuantity(0);
-        }
-        this.itemService.updateItem(item);
-        return "redirect:/product/detail/" + item.getProduct().getId();
-    }
-
-    @GetMapping("/select/{id}")
-    public String selectItem(@PathVariable("id") Integer id, @RequestParam(value = "orderPrice", defaultValue = "") String orderPrice){
-        Product product = this.productService.getProduct(id);
-
-        int total = Integer.parseInt(orderPrice);
-
-        if (total > 0){
-            product.setTotal(total);
-        }
-        this.productService.updateProduct(product);
-        return "redirect:/product/select/" + product.getId();
-    }
-
 }
