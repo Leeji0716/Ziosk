@@ -45,13 +45,24 @@ public class ProductController {
                 }
             }
         }
-
         model.addAttribute("categoryList", categoryList);
         model.addAttribute("productList", productList);
         model.addAttribute("categoryId", categoryId);
 
         return "product_list";
     }
+
+//    @GetMapping("/list")
+//    public String list(Model model, @RequestParam(value = "categoryId", defaultValue = "0") int categoryId){
+//        List<Product> productList;
+//        if (categoryId == 0) {
+//            productList = productService.getList();
+//        } else {
+//            productList = productService.getCategoryList(categoryId);
+//        }
+//        model.addAttribute("productList", productList);
+//        return "product_list :: productListFragment"; // productList의 일부분인 템플릿을 반환
+//    }
 
     @GetMapping("/create")
     public String ProductCreate(ProductForm productForm, ItemForm itemForm, Model model){
