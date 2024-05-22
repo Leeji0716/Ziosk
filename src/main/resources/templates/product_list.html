@@ -19,7 +19,7 @@
                     <a class="btn btn-ghost text-xs" th:href="@{|/product/list|}">전체</a>
                     <div th:each="category : ${categoryList}">
                         <a class="btn btn-ghost text-xs" th:href="@{|/product/list?categoryId=${category.id}|}"
-                            th:text="${category.name}" onclick="saveSelectListToServer()"></a>
+                            th:text="${category.name}"></a>
                     </div>
                 </div>
                 <a th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{|/category/create|}"
@@ -120,7 +120,7 @@
                     <button class="btn btn-ghost text-2xl">장바구니</button>
                 </div>
                 <div class="col-6">
-                    <a href="/product/reset" class="btn btn-primary">장바구니 비우기</a>
+                    <button class="btn btn-primary" onclick="resetCart()" >장바구니 비우기</button>
                 </div>
             </div>
             <div class="bg-green-50 overflow-auto h-[60%]">
@@ -153,22 +153,23 @@
             </div>
         </div>
         <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                var storedSelectList = sessionStorage.getItem('selectList');
+                console.log('reset : ' + storedSelectList);
+                if (storedSelectList) {
+                    selectList = JSON.parse(storedSelectList);
+                    selectList.forEach(function (product) {
+                        renderSelectList(product);
+                    });
+                }
+                calculateTotalPrice();
+            });
 
-            function saveSelectListToServer() {
-                console.log(selectList);
-                // $.ajax({
-                //     url: '/category/saveSelectList', // 서버에 selectList를 저장할 엔드포인트
-                //     type: 'POST',
-                //     data: { selectList: JSON.stringify(selectList)}, // selectList를 JSON 형식으로 서버에 전송
-                    
-                //     success: function(response) {
-                //         console.log('selectList saved to server successfully');
-                //     },
-                //     error: function(xhr, status, error) {
-                //         console.error('Error saving selectList to server:', error);
-                //     }
-                // });
+            function resetCart(){
+                sessionStorage.clear();
+                window.location.href = '/product/list';
             }
+
             // -버튼 클릭 시
             function decreaseItem(element) {
                 var selectItem = element.dataset.index;
@@ -338,18 +339,6 @@
                 sessionStorage.setItem('selectList', JSON.stringify(selectList));
                 console.log('selectList saved to session successfully');
             }
-
-            document.addEventListener('DOMContentLoaded', function () {
-                var storedSelectList = sessionStorage.getItem('selectList');
-                console.log('reset : ' + storedSelectList);
-                if (storedSelectList) {
-                    selectList = JSON.parse(storedSelectList);
-                    selectList.forEach(function (product) {
-                        renderSelectList(product);
-                    });
-                }
-                calculateTotalPrice();
-            });
 
 
             // -버튼 클릭 시
