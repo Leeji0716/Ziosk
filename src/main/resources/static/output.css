@@ -1747,6 +1747,12 @@ html {
   outline-offset: 2px;
 }
 
+.mockup-phone .display {
+  overflow: hidden;
+  border-radius: 40px;
+  margin-top: -25px;
+}
+
 .mockup-browser .mockup-browser-toolbar .input {
   position: relative;
   margin-left: auto;
@@ -2179,10 +2185,6 @@ html {
   height: 100vh;
 }
 
-.w-11\/12 {
-  width: 91.666667%;
-}
-
 .w-4 {
   width: 1rem;
 }
@@ -2193,6 +2195,10 @@ html {
 
 .w-96 {
   width: 24rem;
+}
+
+.w-\[800px\] {
+  width: 800px;
 }
 
 .w-full {
@@ -2306,11 +2312,6 @@ html {
 .px-10 {
   padding-left: 2.5rem;
   padding-right: 2.5rem;
-}
-
-.py-4 {
-  padding-top: 1rem;
-  padding-bottom: 1rem;
 }
 
 .pt-10 {
