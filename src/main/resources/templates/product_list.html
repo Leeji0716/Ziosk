@@ -19,7 +19,7 @@
                     <a class="btn btn-ghost text-xs" th:href="@{|/product/list|}">전체</a>
                     <div th:each="category : ${categoryList}">
                         <a class="btn btn-ghost text-xs" th:href="@{|/product/list?categoryId=${category.id}|}"
-                            th:text="${category.name}"></a>
+                            th:text="${category.name}" onclick="saveSelectListToServer()"></a>
                     </div>
                 </div>
                 <a th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{|/category/create|}"
@@ -153,6 +153,22 @@
             </div>
         </div>
         <script>
+
+            function saveSelectListToServer() {
+                console.log(selectList);
+                // $.ajax({
+                //     url: '/category/saveSelectList', // 서버에 selectList를 저장할 엔드포인트
+                //     type: 'POST',
+                //     data: { selectList: JSON.stringify(selectList)}, // selectList를 JSON 형식으로 서버에 전송
+                    
+                //     success: function(response) {
+                //         console.log('selectList saved to server successfully');
+                //     },
+                //     error: function(xhr, status, error) {
+                //         console.error('Error saving selectList to server:', error);
+                //     }
+                // });
+            }
             // -버튼 클릭 시
             function decreaseItem(element) {
                 var selectItem = element.dataset.index;
@@ -213,13 +229,11 @@
             }
 
             // selectList 배열을 초기화합니다.
-            
             var selectList = [];
+
             
             function addToCart(productId) {
                 getProductById(productId); // 잘됨
-                
-                
             }
 
             function getProductById(productId) {
@@ -229,9 +243,10 @@
                     data: { productId: productId }, // 제품 ID를 전송합니다.
                     success: function (response) {
                         // 서버에서 받은 제품 정보를 selectList에 추가합니다.
-                        selectList.push(response);
 
-                        renderSelectList(response);
+                        const item = renderSelectList(response);
+                        saveSelectListToSession(item);
+
                         calculateTotalPrice(); // 총금액 업데이트-> 의심
                         closeModal(productId); // 잘됨
                     },
@@ -307,7 +322,34 @@
 
                 // 생성된 행을 테이블에 추가
                 productListElement.appendChild(row);
+
+                const item = {
+                    id: currentIndex,
+                    productName: response.productName,
+                    price : price
+                };
+
+                return item;
             }
+
+            function saveSelectListToSession(item) {
+                // 세션 스토리지에 selectList 저장
+                selectList.push(item);
+                sessionStorage.setItem('selectList', JSON.stringify(selectList));
+                console.log('selectList saved to session successfully');
+            }
+
+            document.addEventListener('DOMContentLoaded', function () {
+                var storedSelectList = sessionStorage.getItem('selectList');
+                console.log('reset : ' + storedSelectList);
+                if (storedSelectList) {
+                    selectList = JSON.parse(storedSelectList);
+                    selectList.forEach(function (product) {
+                        renderSelectList(product);
+                    });
+                }
+                calculateTotalPrice();
+            });
 
 
             // -버튼 클릭 시
@@ -385,10 +427,6 @@
                 var modal = document.getElementById('my_modal_' + productId);
                 modal.close();
             }
-
-            document.addEventListener('DOMContentLoaded', function () {
-                calculateTotalPrice();
-            });
 
             /////////////////////////////////////////////////////결제////////////////////////////////////////////////////////
             document.getElementById("payButton").addEventListener("click", function (event) {

@@ -4,6 +4,7 @@ import com.example.Kiosk.product.Product;
 import com.example.Kiosk.product.ProductForm;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -77,5 +78,15 @@ public class CategoryController {
         Category category = this.categoryService.getCategory(id);
         this.categoryService.delete(category);
         return "redirect:/category/create";
+    }
+
+    @PostMapping("/saveSelectList")
+    public ResponseEntity<String> saveSelectList(@RequestBody String selectListJson) {
+        // selectList를 받아서 잠시 저장하는 로직을 구현
+        // 여기서는 간단히 콘솔에 출력만 하도록 예시를 작성합니다.
+        System.out.println("Received selectList JSON: " + selectListJson);
+
+        // 저장이 성공했다고 가정하고 성공 응답을 반환합니다.
+        return ResponseEntity.ok("SelectList saved successfully");
     }
 }
