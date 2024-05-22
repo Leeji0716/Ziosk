@@ -5,6 +5,7 @@ import com.example.Kiosk.category.CategoryService;
 import com.example.Kiosk.item.Item;
 import com.example.Kiosk.item.ItemForm;
 import com.example.Kiosk.item.ItemService;
+import com.google.gson.Gson;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -31,18 +32,15 @@ public class ProductController {
     private final ItemService itemService;
 
     @GetMapping("/list")
-    public String list(Model model, @RequestParam(value = "categoryId", defaultValue = "0") int categoryId){
+    public String list(Model model, @RequestParam(value = "categoryId", defaultValue = "0") int categoryId){ //,
         List<Category> categoryList = categoryService.getList();
         List<Product> productList = new ArrayList<>();
 
         for (Category category : categoryList){
-            if (categoryId == 0){
-                productList.addAll(category.getProductList());
-            }else {
-                if (categoryId == category.getId()){
-                    productList = productService.getCategoryList(categoryId);
-                    break;
-                }
+            if (categoryId == 0) {
+                productList = category.getProductList();
+            } else {
+                productList = productService.getCategoryList(categoryId);
             }
         }
         model.addAttribute("categoryList", categoryList);
@@ -51,9 +49,35 @@ public class ProductController {
 
         return "product_list";
     }
+//
+//    @GetMapping("/listAjax")
+//    @ResponseBody
+//    public List<Product> getProductListByCategory(
+//            @RequestParam(value = "categoryId", defaultValue = "0") int categoryId) {
+//        System.out.println("categoryId: " + categoryId);
+//
+//        // 카테고리별로 필터링된 제품 목록을 가져오는 서비스 메소드를 호출합니다.
+//        List<Product> filteredProductList = productService.getCategoryList(categoryId);
+//        for (Product product : filteredProductList){
+//            System.out.println(product.getProductName());
+//        }
+//        return filteredProductList;
+//    }
 
 //    @GetMapping("/list")
-//    public String list(Model model, @RequestParam(value = "categoryId", defaultValue = "0") int categoryId){
+//    @ResponseBody
+//    public List<Product> list(@RequestParam(value = "categoryId", defaultValue = "0") int categoryId){
+//        List<Product> productList;
+//        if (categoryId == 0) {
+//            productList = productService.getList();
+//        } else {
+//            productList = productService.getCategoryList(categoryId);
+//        }
+//        return productList;
+//    }
+
+//    @PostMapping("/list")
+//    public String listAjax(Model model, @RequestParam(value = "categoryId", defaultValue = "0") int categoryId){
 //        List<Product> productList;
 //        if (categoryId == 0) {
 //            productList = productService.getList();

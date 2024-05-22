@@ -6,10 +6,9 @@
     <meta charset="UTF-8">
     <title>주문 목록</title>
 </head>
-
 <body>
     <div layout:fragment="content" class="col-6 h-[90vh]">
-        <div class="row my-3 h-[5%]">
+        <div class="row my-3 h-[10%]">
             <div class="col-6">
                 <a th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{|/product/create|}"
                     class="btn btn-primary">제품 등록하기</a>
@@ -24,20 +23,9 @@
                 </div>
                 <a th:if="${#authorization.expression('isAuthenticated()')}" href="/category/create" class="btn btn-primary">카테고리 추가</a>
             </div>
-            <!-- <div class="navbar bg-base-100">
-                <div class="flex-1 justify-center">
-                    <a class="btn btn-ghost text-xs" th:href="@{|/product/list|}">전체</a>
-                    <div th:each="category : ${categoryList}">
-                        <a class="btn btn-ghost text-xs" th:href="@{|/product/list?categoryId=${category.id}|}"
-                            th:text="${category.name}"></a>
-                    </div>
-                </div>
-                <a th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{|/category/create|}"
-                    class="btn btn-primary">카테고리 추가</a>
-            </div> -->
         </div>
         <div class="row flex justify-around flex-wrap overflow-y-auto h-[60%]">
-            <div id="productListFragment" th:each="product : ${productList}" class="col-4">
+            <div th:each="product : ${productList}" class="col-4">
                 <a th:id="|product_${product.id}|"></a>
                 <div class="card w-96 bg-base-100 shadow-xl">
                     <figure class="px-10 pt-10">
@@ -124,7 +112,7 @@
                 </div>
             </div>
         </div>
-        <div class="border border-green-200 border-4 rounded-lg h-[40%]">
+        <div class="border border-green-200 border-4 rounded-lg h-[30%]">
             <div class="navbar bg-green-50 h-[20%]">
                 <div class="justify-center">
                     <button class="btn btn-ghost text-2xl">장바구니</button>
@@ -163,22 +151,24 @@
             </div>
         </div>
         <script>
-            $('.category-link').click(function(event) {
-                event.preventDefault(); // 기본 동작 방지
+            // $('.category-link').click(function(event) {
+            //     event.preventDefault(); // 기본 동작 방지
 
-                var categoryId = $(this).data('category-id'); // 클릭한 카테고리의 ID 가져오기
-                $.ajax({
-                    type: 'GET',
-                    url: '/product/list',
-                    data: { categoryId: categoryId },
-                    success: function(response) {
-                        $('#productListFragment').html(response); // 받은 HTML 프래그먼트를 페이지에 삽입
-                    },
-                    error: function() {
-                        console.error('Ajax 요청 실패');
-                    }
-                });
-            });
+            //     var categoryId = $(this).data('category-id'); // 클릭한 카테고리의 ID 가져오기
+            //     $.ajax({
+            //         type: 'GET',
+            //         url: '/product/listAjax',
+            //         data: { categoryId: categoryId }, // 카테고리 ID를 쿼리 문자열의 일부로 포함
+            //         success: function(data) {
+            //             console.log(data);
+            //             // console.log('Product Name: ', product.productName);
+            //             updateProductList(data);
+            //         },
+            //         error: function() {
+            //             console.error('Ajax 요청 실패');
+            //         }
+            //     });
+            // });
 
             // -버튼 클릭 시
             function decreaseItem(element) {
@@ -245,8 +235,6 @@
             
             function addToCart(productId) {
                 getProductById(productId); // 잘됨
-                
-                
             }
 
             function getProductById(productId) {

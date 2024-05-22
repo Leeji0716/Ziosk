@@ -2199,6 +2199,14 @@ html {
   height: 100vh;
 }
 
+.h-\[10\%\] {
+  height: 10%;
+}
+
+.h-\[30\%\] {
+  height: 30%;
+}
+
 .w-4 {
   width: 1rem;
 }
