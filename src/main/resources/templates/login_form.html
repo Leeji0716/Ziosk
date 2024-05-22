@@ -8,12 +8,12 @@
 <div layout:fragment="content" class="my-3">
     <form th:action="@{/user/login}" method="post">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-        <!-- <div th:if="${param.error}">
+        <div th:if="${param.error}">
             <div class="alert alert-error">
                 <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                 <span>사용자ID 또는 비밀번호를 확인해 주세요.</span>
             </div>
-        </div> -->
+        </div>
         <div id="username-error" class="alert alert-error" style="display: none;">
             <svg xmlns="http://www.w3.org/2000/svg" class="stroke-current shrink-0 h-6 w-6" fill="none" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -39,6 +39,9 @@
             </label>
         </div>
         <button type="submit" class="btn btn-primary">로그인</button>
+        <div class="mb-4">
+            <a class="btn btn-ghost text-lg" th:href="@{/user/signup}">회원가입</a>
+        </div>
     </form>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>

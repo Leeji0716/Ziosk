@@ -24,12 +24,12 @@ class KioskApplicationTests {
 	@Autowired
 	private UserService userService;
 
-	@Test
-	void testUser(){
-		String username = "dlwldud";
-		String Password = "dlwldud0716";
-		userService.create(username, Password);
-	}
+//	@Test
+//	void testUser(){
+//		String username = "dlwldud";
+//		String Password = "dlwldud0716";
+//		userService.create(username, Password);
+//	}
 
 	@Autowired
 	private ProductRepository productRepository;
