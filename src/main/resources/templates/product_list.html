@@ -231,10 +231,6 @@
                         // 서버에서 받은 제품 정보를 selectList에 추가합니다.
                         selectList.push(response);
 
-                        // 제품 정보를 확인하기 위해 콘솔에 출력합니다.
-                        console.log('제품 정보를 추가했습니다:', response);
-                        console.log('현재 selectList:', selectList);
-
                         renderSelectList(response);
                         calculateTotalPrice(); // 총금액 업데이트-> 의심
                         closeModal(productId); // 잘됨
@@ -247,8 +243,6 @@
             }
 
             function renderSelectList(response) {
-                console.log(response);
-
                 // productTableBody 요소를 가져옵니다.
                 var productListElement = document.getElementById('productTableBody');
 
@@ -350,10 +344,8 @@
                 var totalPricePerProduct = price * quantity;
 
                 var targetId = 'totalPricePerProduct_' + selectIndex;
-                console.log(targetId);
                 var targetElement = document.getElementById(targetId);
                 var formattedtotalPricePerProduct = totalPricePerProduct.toLocaleString(); // 콤마를 포함한 형식으로 변환
-                console.log(formattedtotalPricePerProduct);
                 targetElement.innerText = formattedtotalPricePerProduct + "원";
 
                 calculateTotalPrice();
@@ -378,7 +370,6 @@
                     const pid = e.target.dataset.pid;
                     const priceText = document.getElementById('orderPrice_' + pid).innerText;
                     const price = parseInt(priceText.replace(/[^0-9]/g, ''), 10); // 숫자만 추출하여 정수로 변환
-                    console.log(price);
                     location.href = `/item/select/${pid}?orderPrice=${price}`;
                 });
             });
