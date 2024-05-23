@@ -32,20 +32,26 @@ public class ProductController {
     private final ItemService itemService;
 
     @GetMapping("/list")
-    public String list(Model model, @RequestParam(value = "categoryId", defaultValue = "0") int categoryId){ //,
+    public String list(Model model, @RequestParam(value = "categoryId", defaultValue = "0") int categoryId){
+        System.out.println(categoryId);
         List<Category> categoryList = categoryService.getList();
         List<Product> productList = new ArrayList<>();
 
         for (Category category : categoryList){
-            if (categoryId == 0) {
-                productList = category.getProductList();
-            } else {
-                productList = productService.getCategoryList(categoryId);
+            if (categoryId == 0){
+                productList.addAll(category.getProductList());
+            }else {
+                if (categoryId == category.getId()){
+                    productList = productService.getCategoryList(categoryId);
+                    break;
+                }
             }
         }
         model.addAttribute("categoryList", categoryList);
         model.addAttribute("productList", productList);
         model.addAttribute("categoryId", categoryId);
+
+
 
         return "product_list";
     }
