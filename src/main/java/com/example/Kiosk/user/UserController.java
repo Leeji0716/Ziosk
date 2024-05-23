@@ -94,11 +94,14 @@ public class UserController {
 
             if (usernameError != null) {
                 userCreateForm.setUsernameError(usernameError.getDefaultMessage());
-            } else if (password1Error != null) {
+            }
+            if (password1Error != null) {
                 userCreateForm.setPassword1Error(password1Error.getDefaultMessage());
-            } else if (password2Error != null) {
+            }
+            if (password2Error != null) {
                 userCreateForm.setPassword2Error(password2Error.getDefaultMessage());
-            } else if (emailError != null) {
+            }
+            if (emailError != null) {
                 userCreateForm.setEmailError(emailError.getDefaultMessage());
             }
 

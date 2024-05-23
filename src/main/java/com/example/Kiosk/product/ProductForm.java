@@ -25,5 +25,9 @@ public class ProductForm {
 
     @NotNull
     private int categoryID;
+
+    private String productError;
+    private String priceError;
+    private String imageError;
 }
 

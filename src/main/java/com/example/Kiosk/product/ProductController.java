@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -64,6 +65,19 @@ public class ProductController {
         List<Category> categoryList = this.categoryService.getList(); // 모든 카테고리를 가져옴
         model.addAttribute("categoryList", categoryList); // 카테고리 목록을 모델에 추가
         if (bindingResult.hasErrors()){
+            FieldError productError = bindingResult.getFieldError("product");
+            FieldError priceError = bindingResult.getFieldError("price");
+            FieldError imageError = bindingResult.getFieldError("image");
+
+            if (productError != null) {
+                productForm.setProductError(productError.getDefaultMessage());
+            }
+            if (priceError != null) {
+                productForm.setPriceError(priceError.getDefaultMessage());
+            }
+            if (imageError != null) {
+                productForm.setImageError(imageError.getDefaultMessage());
+            }
             return "product_form";
         }
 
@@ -105,7 +119,20 @@ public class ProductController {
     @PostMapping("/modify/{id}")
     public String productModify(@Valid ProductForm productForm, BindingResult bindingResult,
                                 @PathVariable("id") Integer id){
-        if (bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors()){
+            FieldError productError = bindingResult.getFieldError("product");
+            FieldError priceError = bindingResult.getFieldError("price");
+            FieldError imageError = bindingResult.getFieldError("image");
+
+            if (productError != null) {
+                productForm.setProductError(productError.getDefaultMessage());
+            }
+            if (priceError != null) {
+                productForm.setPriceError(priceError.getDefaultMessage());
+            }
+            if (imageError != null) {
+                productForm.setImageError(imageError.getDefaultMessage());
+            }
             return "product_form";
         }
 
