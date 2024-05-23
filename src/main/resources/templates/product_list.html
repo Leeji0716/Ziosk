@@ -350,8 +350,28 @@
                 if (currentQuantity > 0) {
                     currentQuantity -= 1; // 현재 수량에서 1을 빼기
                     quantityElement.innerText = currentQuantity; // 업데이트된 수량을 화면에 표시
+
+                    if (currentQuantity === 0) {
+                        removeFromCart(selectIndex); // 수량이 0이 되면 장바구니에서 제거
+                    } else {
+                        update(selectIndex);
+                    }
                 }
-                update(selectIndex);
+            }
+
+            function removeFromCart(selectIndex) {
+                // 해당 품목을 selectList에서 제거
+                selectList = selectList.filter(function(item) {
+                    return item.id !== parseInt(selectIndex);
+                });
+                // 장바구니에서 해당 품목 삭제
+                var productRow = document.querySelector('.product-row:nth-child(' + selectIndex + ')');
+                productRow.parentNode.removeChild(productRow);
+
+                // 변경된 장바구니 정보를 세션에 저장
+                sessionStorage.setItem('selectList', JSON.stringify(selectList));
+
+                calculateTotalPrice(); // 총 상품 가격 다시 계산
             }
 
             // +버튼 클릭 시
