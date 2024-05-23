@@ -1,452 +1,476 @@
 <!DOCTYPE html>
 <html layout:decorate="~{layout}" lang="en" xmlns:layout="http://www.w3.org/1999/xhtml"
-    xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
+      xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
 
 <head>
     <meta charset="UTF-8">
     <title>주문 목록</title>
 </head>
 <body>
-    <div layout:fragment="content" class="col-6 h-[90vh]">
-        <div class="row my-3 h-[10%]">
-            <div class="col-6">
-                <a th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{|/product/create|}"
-                    class="btn btn-primary">제품 등록하기</a>
+<div layout:fragment="content" class="col-6 h-[90vh]">
+    <div class="row my-3 h-[10%]">
+        <div class="col-6">
+            <a th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{|/product/create|}"
+               class="btn btn-primary">제품 등록하기</a>
+        </div>
+        <div class="navbar bg-base-100">
+            <div class="flex-1 justify-center">
+                <a class="btn btn-ghost text-xs" href="/product/list" data-category-id="0">전체</a>
+                <div th:each="category : ${categoryList}">
+                    <a class="btn btn-ghost text-xs category-link" href="#" th:data-category-id="${category.id}"
+                       th:text="${category.name}"></a>
+                </div>
             </div>
-            <div class="navbar bg-base-100">
-                <div class="flex-1 justify-center">
-                    <a class="btn btn-ghost text-xs" href="/product/list" data-category-id="0">전체</a>
-                    <div th:each="category : ${categoryList}">
-                        <a class="btn btn-ghost text-xs category-link" href="#" th:data-category-id="${category.id}"
-                            th:text="${category.name}"></a>
+            <a th:if="${#authorization.expression('isAuthenticated()')}" href="/category/create" class="btn btn-primary">카테고리 추가</a>
+        </div>
+    </div>
+    <div class="row flex justify-around flex-wrap overflow-y-auto h-[60%]">
+        <div th:each="product : ${productList}" class="col-4">
+            <a th:id="|product_${product.id}|"></a>
+            <div class="card w-96 bg-base-100 shadow-xl">
+                <figure class="px-10 pt-10">
+                    <img th:src="${product.image}" alt="Empty" class="rounded-xl" width="100" height="200" />
+                </figure>
+                <div class="card-body items-center text-center">
+                    <h2 class="card-title" th:text="${product.productName}"></h2>
+                    <p class="card-text product-price" th:text="${product.price} + '원'"></p>
+                    <div class="card-actions">
+                        <button sec:authorize="isAnonymous()" class="btn btn-accent"
+                                th:attr="onclick='openModal(\'' + ${product.id} + '\')'">담기</button>
+                        <a sec:authorize="isAuthenticated()" th:href="@{|/product/modify/${product.id}|}"
+                           class="btn btn-primary">수정</a>
+                        <a sec:authorize="isAuthenticated()" href="javascript:void(0);"
+                           th:data-uri="@{|/product/delete/${product.id}|}" class="delete btn btn-error">삭제</a>
                     </div>
                 </div>
-                <a th:if="${#authorization.expression('isAuthenticated()')}" href="/category/create" class="btn btn-primary">카테고리 추가</a>
-            </div>
-        </div>
-        <div class="row flex justify-around flex-wrap overflow-y-auto h-[60%]">
-            <div th:each="product : ${productList}" class="col-4">
-                <a th:id="|product_${product.id}|"></a>
-                <div class="card w-96 bg-base-100 shadow-xl">
-                    <figure class="px-10 pt-10">
-                        <img th:src="${product.image}" alt="Empty" class="rounded-xl" width="100" height="200" />
-                    </figure>
-                    <div class="card-body items-center text-center">
-                        <h2 class="card-title" th:text="${product.productName}"></h2>
-                        <p class="card-text product-price" th:text="${product.price} + '원'"></p>
-                        <div class="card-actions">
-                            <button sec:authorize="isAnonymous()" class="btn btn-accent"
-                                th:attr="onclick='openModal(\'' + ${product.id} + '\')'">담기</button>
-                            <a sec:authorize="isAuthenticated()" th:href="@{|/product/modify/${product.id}|}"
-                                class="btn btn-primary">수정</a>
-                            <a sec:authorize="isAuthenticated()" href="javascript:void(0);"
-                                th:data-uri="@{|/product/delete/${product.id}|}" class="delete btn btn-error">삭제</a>
-                        </div>
-                    </div>
-                    <!-- 각 제품에 대한 모달 -->
-                    <dialog th:id="@{|my_modal_${product.id}|}" class="modal">
-                        <div class="modal-box w-[800px] max-w-5xl">
-                            <div class="flex justify-center">
-                                <div class="card w-96 bg-base-100 shadow-xl">
-                                    <figure class="px-10 pt-10">
-                                        <img th:src="${product.image}" alt="Empty" class="rounded-xl" width="100"
-                                            height="200" />
-                                    </figure>
-                                    <div class="card-body items-center text-center">
-                                        <h2 class="card-title" th:text="${product.productName}"></h2>
-                                        <p class="card-text product-price" th:text="${product.price} + '원'"></p>
-                                    </div>
+                <!-- 각 제품에 대한 모달 -->
+                <dialog th:id="@{|my_modal_${product.id}|}" class="modal">
+                    <div class="modal-box w-[800px] max-w-5xl">
+                        <div class="flex justify-center">
+                            <div class="card w-96 bg-base-100 shadow-xl">
+                                <figure class="px-10 pt-10">
+                                    <img th:src="${product.image}" alt="Empty" class="rounded-xl" width="100"
+                                         height="200" />
+                                </figure>
+                                <div class="card-body items-center text-center">
+                                    <h2 class="card-title" th:text="${product.productName}"></h2>
+                                    <p class="card-text product-price" th:text="${product.price} + '원'"></p>
                                 </div>
-                                <table class="table">
-                                    <thead>
-                                        <tr class="text-center">
-                                            <th>번호</th>
-                                            <th style="width:50%">항목</th>
-                                            <th>가격</th>
-                                            <th>수량</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr class="text-center item-row" th:each="item, index : ${product.itemList}">
-                                            <td th:text="${index.index + 1}"></td>
-                                            <td th:text="${item.content}"></td>
-                                            <td th:id="${'item-price_' + item.id}" class="item-price"
-                                                th:text="${item.price} + '원'"></td>
-                                            <td>
-                                                <button th:data-index="${item.id}" th:data-product-id="${product.id}"
-                                                    onclick="decreaseItem(this)"
-                                                    class="btn btn-xs btn-outline btn-error">-</button>
-                                                <span th:id="${'itemQuantity_' + item.id}"
-                                                    class="item-quantity">0</span>
-                                                <button th:data-index="${item.id}" th:data-product-id="${product.id}"
-                                                    onclick="increaseItem(this)"
-                                                    class="btn btn-xs btn-outline btn-success">+</button>
-                                                <span th:id="${'totalPricePerItem_' + item.id}"
-                                                    th:data-total-price="${totalPricePerItem}" class="totalPricePerItem"
-                                                    hidden></span>
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
                             </div>
-                            <div class="navbar bg-green-100 h-[20%]">
-                                <div class="flex-1 justify-start">
-                                    <span class="text-2xl font-bold">총 가격</span>
-                                </div>
-                                <div class="flex-1 justify-center">
-                                    <span class="text-2xl font-bold" th:id="${'orderPrice_' + product.id}"></span>
-                                </div>
-                                <div class="col-6">
-                                    <button sec:authorize="isAnonymous()" class="btn btn-accent"
+                            <table class="table">
+                                <thead>
+                                <tr class="text-center">
+                                    <th>번호</th>
+                                    <th style="width:50%">항목</th>
+                                    <th>가격</th>
+                                    <th>수량</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr class="text-center item-row" th:each="item, index : ${product.itemList}">
+                                    <td th:text="${index.index + 1}"></td>
+                                    <td th:text="${item.content}"></td>
+                                    <td th:id="${'item-price_' + item.id}" class="item-price"
+                                        th:text="${item.price} + '원'"></td>
+                                    <td>
+                                        <button th:data-index="${item.id}" th:data-product-id="${product.id}"
+                                                onclick="decreaseItem(this)"
+                                                class="btn btn-xs btn-outline btn-error">-</button>
+                                        <span th:id="${'itemQuantity_' + item.id}"
+                                              class="item-quantity">0</span>
+                                        <button th:data-index="${item.id}" th:data-product-id="${product.id}"
+                                                onclick="increaseItem(this)"
+                                                class="btn btn-xs btn-outline btn-success">+</button>
+                                        <span th:id="${'totalPricePerItem_' + item.id}"
+                                              th:data-total-price="${totalPricePerItem}" class="totalPricePerItem"
+                                              hidden></span>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="navbar bg-green-100 h-[20%]">
+                            <div class="flex-1 justify-start">
+                                <span class="text-2xl font-bold">총 가격</span>
+                            </div>
+                            <div class="flex-1 justify-center">
+                                <span class="text-2xl font-bold" th:id="${'orderPrice_' + product.id}"></span>
+                            </div>
+                            <div class="col-6">
+                                <button sec:authorize="isAnonymous()" class="btn btn-accent"
                                         th:data-pid="${product.id}"
                                         th:attr="onclick='addToCart(\'' + ${product.id} + '\')'">담기</button>
-                                </div>
-                            </div>
-                            <div class="modal-action col-6">
-                                <form method="dialog">
-                                    <button class="btn">Close</button>
-                                </form>
                             </div>
                         </div>
-                    </dialog>
-                </div>
+                        <div class="modal-action col-6">
+                            <form method="dialog">
+                                <button class="btn">Close</button>
+                            </form>
+                        </div>
+                    </div>
+                </dialog>
             </div>
         </div>
-        <div class="border border-green-200 border-4 rounded-lg h-[30%]">
-            <div class="navbar bg-green-50 h-[20%]">
-                <div class="justify-center">
-                    <button class="btn btn-ghost text-2xl">장바구니</button>
-                </div>
-                <div class="col-6">
-                    <a href="/product/reset" class="btn btn-primary">장바구니 비우기</a>
-                </div>
-            </div>
-            <div class="bg-green-50 overflow-auto h-[60%]">
-                <table class="table" style="max-height: 100%;">
-                    <thead>
-                        <tr class="text-center">
-                            <th>번호</th>
-                            <th style="width:50%">상품명</th>
-                            <th>가격</th>
-                            <th>수량</th>
-                            <th>금액</th>
-                        </tr>
-                    </thead>
-                    <tbody id="selectproductTableBody">
-                        <!-- JavaScript에서 행이 여기에 추가될 것입니다. -->
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="navbar bg-green-100 h-[20%]">
-                <div class="flex-1 justify-start">
-                    <span class="text-2xl font-bold">총 상품 가격</span>
-                </div>
-                <div class="flex-1 justify-center">
-                    <span id="totalPrice" class="text-2xl font-bold"></span>
-                </div>
-                <div class="col-6">
-                    <button id="payButton" class="btn btn-primary">결제</button>
-                </div>
-            </div>
-        </div>
-        <script>
-            // $('.category-link').click(function(event) {
-            //     event.preventDefault(); // 기본 동작 방지
-
-            //     var categoryId = $(this).data('category-id'); // 클릭한 카테고리의 ID 가져오기
-            //     $.ajax({
-            //         type: 'GET',
-            //         url: '/product/listAjax',
-            //         data: { categoryId: categoryId }, // 카테고리 ID를 쿼리 문자열의 일부로 포함
-            //         success: function(data) {
-            //             console.log(data);
-            //             // console.log('Product Name: ', product.productName);
-            //             updateProductList(data);
-            //         },
-            //         error: function() {
-            //             console.error('Ajax 요청 실패');
-            //         }
-            //     });
-            // });
-
-            // -버튼 클릭 시
-            function decreaseItem(element) {
-                var selectItem = element.dataset.index;
-                var productId = element.dataset.productId;
-                var quantityElement = document.getElementById('itemQuantity_' + selectItem);
-                var currentQuantity = parseInt(quantityElement.innerText);
-
-                if (currentQuantity > 0) {
-                    currentQuantity -= 1; // 현재 수량에서 1을 빼기
-                    quantityElement.innerText = currentQuantity; // 업데이트된 수량을 화면에 표시
-                }
-                updateItem(selectItem, productId);
-            }
-
-            // +버튼 클릭 시
-            function increaseItem(element) {
-                var selectItem = element.dataset.index;
-                var productId = element.dataset.productId;
-                var quantityElement = document.getElementById('itemQuantity_' + selectItem);
-                var currentQuantity = parseInt(quantityElement.innerText);
-
-                currentQuantity += 1; // 현재 수량에 1을 더하기
-                quantityElement.innerText = currentQuantity; // 업데이트된 수량을 화면에 표시
-
-                updateItem(selectItem, productId);
-            }
-
-            function updateItem(selectItem, productId) {
-                var priceElement = document.getElementById('item-price_' + selectItem);
-                var quantityElement = document.getElementById('itemQuantity_' + selectItem);
-
-                var price = parseInt(priceElement.innerText) || 0;
-                var quantity = parseInt(quantityElement.innerText) || 0;
-
-                var totalPricePerItem = price * quantity;
-
-                var targetId = 'totalPricePerItem_' + selectItem;
-                var targetElement = document.getElementById(targetId);
-                targetElement.innerText = totalPricePerItem + '원';
-
-                targetElement.setAttribute('data-total-price', totalPricePerItem);
-
-                calculateOrderPrice(productId);
-            }
-
-            function calculateOrderPrice(productId) {
-                var modal = document.getElementById('my_modal_' + productId);
-                var productPrice = parseFloat(modal.querySelector(".product-price").innerText.replace("원", "")) || 0;
-                var orderPrice = productPrice;
-
-                var itemRows = document.querySelectorAll(".item-row");
-                itemRows.forEach(function (row) {
-                    var totalPricePerItem = parseInt(row.querySelector(".totalPricePerItem").innerText.replace("원", "")) || 0;
-                    orderPrice += totalPricePerItem;
-                });
-                var formattedPrice = orderPrice.toLocaleString(); // 콤마를 포함한 형식으로 변환
-                document.getElementById('orderPrice_' + productId).innerText = formattedPrice + '원';
-            }
-
-            // selectList 배열을 초기화합니다.
-            
-            var selectList = [];
-            
-            function addToCart(productId) {
-                getProductById(productId); // 잘됨
-            }
-
-            function getProductById(productId) {
-                $.ajax({
-                    url: '/product/getProduct', // 서버에서 제품 정보를 조회하는 컨트롤러의 URL
-                    type: 'GET',
-                    data: { productId: productId }, // 제품 ID를 전송합니다.
-                    success: function (response) {
-                        // 서버에서 받은 제품 정보를 selectList에 추가합니다.
-                        selectList.push(response);
-
-                        // 제품 정보를 확인하기 위해 콘솔에 출력합니다.
-                        console.log('제품 정보를 추가했습니다:', response);
-                        console.log('현재 selectList:', selectList);
-
-                        renderSelectList(response);
-                        calculateTotalPrice(); // 총금액 업데이트-> 의심
-                        closeModal(productId); // 잘됨
-                    },
-                    error: function (xhr, status, error) {
-                        // 오류 처리를 수행합니다.
-                        console.error(error);
-                    }
-                });
-            }
-
-            function renderSelectList(response) {
-                console.log(response);
-
-                // selectproductTableBody 요소를 가져옵니다.
-                var productListElement = document.getElementById('selectproductTableBody');
-
-                // 새로운 행 생성
-                var row = document.createElement('tr');
-                row.className = 'text-center product-row';
-
-                // 현재 행의 인덱스를 계산합니다.
-                var currentIndex = productListElement.children.length + 1;
-
-                // 번호 열
-                var cellIndex = document.createElement('td');
-                cellIndex.innerText = currentIndex; // 이전 행의 개수에 1을 더함
-                row.appendChild(cellIndex);
-
-                // 상품명 열
-                var cellName = document.createElement('td');
-                cellName.className = 'product-name';
-                cellName.innerText = response.productName;
-                row.appendChild(cellName);
-
-                // 가격 열
-                var priceElementId = 'orderPrice_' + response.id;
-                var priceElement = document.getElementById(priceElementId);
-                var price = priceElement ? priceElement.innerText : response.price;
-                var cellPrice = document.createElement('td');
-                cellPrice.className = 'product-price';
-                cellPrice.innerText = price;
-                row.appendChild(cellPrice);
-
-                // - 버튼 열
-                var cellQuantity = document.createElement('td');
-                var decreaseButton = document.createElement('button');
-                decreaseButton.className = 'btn btn-xs btn-outline btn-error';
-                decreaseButton.innerText = '-';
-                decreaseButton.setAttribute('data-index', currentIndex);
-                decreaseButton.onclick = function () { decreaseQuantity(this); };
-                cellQuantity.appendChild(decreaseButton);
-
-                // 수량 표시 열
-                var quantitySpan = document.createElement('span');
-                quantitySpan.id = 'quantity_' + currentIndex;
-                quantitySpan.className = 'product-quantity';
-                quantitySpan.innerText = 1;
-                cellQuantity.appendChild(quantitySpan);
-
-                // + 버튼 열
-                var increaseButton = document.createElement('button');
-                increaseButton.className = 'btn btn-xs btn-outline btn-success';
-                increaseButton.innerText = '+';
-                increaseButton.setAttribute('data-index', currentIndex);
-                increaseButton.onclick = function () { increaseQuantity(this); };
-                cellQuantity.appendChild(increaseButton);
-                row.appendChild(cellQuantity);
-
-                // 금액 열
-                var cellTotalPrice = document.createElement('td');
-                cellTotalPrice.id = 'totalPricePerProduct_' + currentIndex;
-                cellTotalPrice.className = 'totalPricePerProduct';
-                cellTotalPrice.innerText = price;
-                row.appendChild(cellTotalPrice);
-
-                // 생성된 행을 테이블에 추가
-                productListElement.appendChild(row);
-            }
-
-
-            // -버튼 클릭 시
-            function decreaseQuantity(element) {
-                var selectIndex = element.dataset.index;
-                var quantityElement = document.getElementById('quantity_' + selectIndex);
-                var currentQuantity = parseInt(quantityElement.innerText);
-
-                if (currentQuantity > 0) {
-                    currentQuantity -= 1; // 현재 수량에서 1을 빼기
-                    quantityElement.innerText = currentQuantity; // 업데이트된 수량을 화면에 표시
-                }
-                update(selectIndex);
-            }
-
-            // +버튼 클릭 시
-            function increaseQuantity(element) {
-                var selectIndex = element.dataset.index;
-                var quantityElement = document.getElementById('quantity_' + selectIndex);
-                var currentQuantity = parseInt(quantityElement.innerText);
-
-                currentQuantity += 1; // 현재 수량에 1을 더하기
-                quantityElement.innerText = currentQuantity; // 업데이트된 수량을 화면에 표시
-                update(selectIndex);
-            }
-
-            function update(selectIndex) { //totalPricePerProduct
-                var priceElement = document.querySelector('.product-row:nth-child(' + selectIndex + ') .product-price');
-                var quantityElement = document.getElementById('quantity_' + selectIndex);
-
-                var price = parseInt(priceElement.innerText.replace(",", "").replace("원", ""));
-                var quantity = parseInt(quantityElement.innerText);
-
-                var totalPricePerProduct = price * quantity;
-
-                var targetId = 'totalPricePerProduct_' + selectIndex;
-                console.log(targetId);
-                var targetElement = document.getElementById(targetId);
-                var formattedtotalPricePerProduct = totalPricePerProduct.toLocaleString(); // 콤마를 포함한 형식으로 변환
-                console.log(formattedtotalPricePerProduct);
-                targetElement.innerText = formattedtotalPricePerProduct + "원";
-
-                calculateTotalPrice();
-            }
-
-            function calculateTotalPrice() { //totalPrice
-                var totalPrice = 0;
-                var productRows = document.querySelectorAll(".product-row");
-                productRows.forEach(function (row) {
-                    var totalPricePerProductText = row.querySelector(".totalPricePerProduct").innerText;
-                    // "원" 문자열 제거 후 숫자만 추출
-                    var totalPricePerProduct = parseInt(totalPricePerProductText.replace("원", "").replace(",", "")) || 0;
-                    totalPrice += totalPricePerProduct;
-                });
-                var formattedPrice = totalPrice.toLocaleString(); // 콤마를 포함한 형식으로 변환
-                document.getElementById("totalPrice").innerText = formattedPrice + "원";
-            }
-
-            document.querySelectorAll("[id^='add-item_']").forEach(function (elem) {
-                elem.addEventListener("click", function (e) {
-                    e.preventDefault();
-                    const pid = e.target.dataset.pid;
-                    const priceText = document.getElementById('orderPrice_' + pid).innerText;
-                    const price = parseInt(priceText.replace(/[^0-9]/g, ''), 10); // 숫자만 추출하여 정수로 변환
-                    console.log(price);
-                    location.href = `/item/select/${pid}?orderPrice=${price}`;
-                });
-            });
-
-            ///////////////////////////////////////////////////담기 모달//////////////////////////////////////////////////////
-            function openModal(productId) {
-                var modal = document.getElementById('my_modal_' + productId);
-                modal.showModal();
-                calculateOrderPrice(productId); // 모달을 열 때 주문 가격 계산
-            }
-
-            function closeModal(productId) {
-                var modal = document.getElementById('my_modal_' + productId);
-                modal.close();
-            }
-
-            document.addEventListener('DOMContentLoaded', function () {
-                calculateTotalPrice();
-            });
-
-            /////////////////////////////////////////////////////결제////////////////////////////////////////////////////////
-            document.getElementById("payButton").addEventListener("click", function (event) {
-                // totalPrice를 가져와서 콤마를 제거하고 숫자로 변환
-                var totalPriceString = document.getElementById("totalPrice").innerText;
-                var totalPriceNumber = parseInt(totalPriceString.replace(/,/g, ''), 10);
-
-                IMP.init('imp07531670'); // 아임포트에서 발급받은 가맹점 식별코드로 초기화합니다.
-
-                event.preventDefault(); // 기본 동작(폼 전송)을 중지
-
-                // 결제 요청 정보 설정
-                var payReq = {
-                    pg: 'html5_inicis',
-                    pay_method: 'card',
-                    merchant_uid: 'merchant_' + new Date().getTime(),
-                    name: '주문명:Ziosk',
-                    amount: totalPriceNumber,
-                    buyer_postcode: '',
-                    m_redirect_url: 'http://localhost:8088/product/success' // 모바일에서 결제 완료 후 리디렉션 될 URL
-                };
-
-                // 결제 요청 수행
-                IMP.request_pay(payReq, function (response) {
-                    if (response.success) {
-                        console.log(response);
-                        window.location.href = payReq.m_redirect_url;
-                    } else {
-                        alert('결제실패 : ' + response.error_msg);
-                        // 결제 실패 시 추가적인 처리를 수행
-                    }
-                });
-            });
-        </script>
     </div>
+    <div class="border border-green-200 border-4 rounded-lg h-[30%]">
+        <div class="navbar bg-green-50 h-[20%]">
+            <div class="justify-center">
+                <button class="btn btn-ghost text-2xl">장바구니</button>
+            </div>
+            <div class="col-6">
+                <button class="btn btn-primary" onclick="resetCart()" >장바구니 비우기</button>
+            </div>
+        </div>
+        <div class="bg-green-50 overflow-auto h-[60%]">
+            <table class="table" style="max-height: 100%;">
+                <thead>
+                <tr class="text-center">
+                    <th>번호</th>
+                    <th style="width:50%">상품명</th>
+                    <th>가격</th>
+                    <th>수량</th>
+                    <th>금액</th>
+                </tr>
+                </thead>
+                <tbody id="selectproductTableBody">
+                <!-- JavaScript에서 행이 여기에 추가될 것입니다. -->
+                </tbody>
+            </table>
+        </div>
+
+        <div class="navbar bg-green-100 h-[20%]">
+            <div class="flex-1 justify-start">
+                <span class="text-2xl font-bold">총 상품 가격</span>
+            </div>
+            <div class="flex-1 justify-center">
+                <span id="totalPrice" class="text-2xl font-bold"></span>
+            </div>
+            <div class="col-6">
+                <button id="payButton" class="btn btn-primary">결제</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var storedSelectList = sessionStorage.getItem('selectList');
+            console.log('reset : ' + storedSelectList);
+            if (storedSelectList) {
+                selectList = JSON.parse(storedSelectList);
+                selectList.forEach(function (product) {
+                    renderSelectList(product);
+                });
+            }
+            calculateTotalPrice();
+        });
+
+        function resetCart(){
+            sessionStorage.clear();
+            window.location.href = '/product/list';
+        }
+
+        // -버튼 클릭 시
+        function decreaseItem(element) {
+            var selectItem = element.dataset.index;
+            var productId = element.dataset.productId;
+            var quantityElement = document.getElementById('itemQuantity_' + selectItem);
+            var currentQuantity = parseInt(quantityElement.innerText);
+
+            if (currentQuantity > 0) {
+                currentQuantity -= 1; // 현재 수량에서 1을 빼기
+                quantityElement.innerText = currentQuantity; // 업데이트된 수량을 화면에 표시
+            }
+            updateItem(selectItem, productId);
+        }
+
+        // +버튼 클릭 시
+        function increaseItem(element) {
+            var selectItem = element.dataset.index;
+            var productId = element.dataset.productId;
+            var quantityElement = document.getElementById('itemQuantity_' + selectItem);
+            var currentQuantity = parseInt(quantityElement.innerText);
+
+            currentQuantity += 1; // 현재 수량에 1을 더하기
+            quantityElement.innerText = currentQuantity; // 업데이트된 수량을 화면에 표시
+
+            updateItem(selectItem, productId);
+        }
+
+        function updateItem(selectItem, productId) {
+            var priceElement = document.getElementById('item-price_' + selectItem);
+            var quantityElement = document.getElementById('itemQuantity_' + selectItem);
+
+            var price = parseInt(priceElement.innerText) || 0;
+            var quantity = parseInt(quantityElement.innerText) || 0;
+
+            var totalPricePerItem = price * quantity;
+
+            var targetId = 'totalPricePerItem_' + selectItem;
+            var targetElement = document.getElementById(targetId);
+            targetElement.innerText = totalPricePerItem + '원';
+
+            targetElement.setAttribute('data-total-price', totalPricePerItem);
+
+            calculateOrderPrice(productId);
+        }
+
+        function calculateOrderPrice(productId) {
+            var modal = document.getElementById('my_modal_' + productId);
+            var productPrice = parseFloat(modal.querySelector(".product-price").innerText.replace("원", "")) || 0;
+            var orderPrice = productPrice;
+
+            var itemRows = document.querySelectorAll(".item-row");
+            itemRows.forEach(function (row) {
+                var totalPricePerItem = parseInt(row.querySelector(".totalPricePerItem").innerText.replace("원", "")) || 0;
+                orderPrice += totalPricePerItem;
+            });
+            var formattedPrice = orderPrice.toLocaleString(); // 콤마를 포함한 형식으로 변환
+            document.getElementById('orderPrice_' + productId).innerText = formattedPrice + '원';
+        }
+
+        // selectList 배열을 초기화합니다.
+        var selectList = [];
+
+
+        function addToCart(productId) {
+            getProductById(productId); // 잘됨
+        }
+
+        function getProductById(productId) {
+            $.ajax({
+                url: '/product/getProduct', // 서버에서 제품 정보를 조회하는 컨트롤러의 URL
+                type: 'GET',
+                data: { productId: productId }, // 제품 ID를 전송합니다.
+                success: function (response) {
+                    // 서버에서 받은 제품 정보를 selectList에 추가합니다.
+                    const item = renderSelectList(response);
+                    saveSelectListToSession(item);
+                    calculateTotalPrice(); // 총금액 업데이트-> 의심
+                    closeModal(productId); // 잘됨
+                },
+                error: function (xhr, status, error) {
+                    // 오류 처리를 수행합니다.
+                    console.error(error);
+                }
+            });
+        }
+
+        function renderSelectList(response) {
+            console.log(response);
+
+            // selectproductTableBody 요소를 가져옵니다.
+            var productListElement = document.getElementById('selectproductTableBody');
+
+            // 새로운 행 생성
+            var row = document.createElement('tr');
+            row.className = 'text-center product-row';
+
+            // 현재 행의 인덱스를 계산합니다.
+            var currentIndex = productListElement.children.length + 1;
+
+            // 번호 열
+            var cellIndex = document.createElement('td');
+            cellIndex.innerText = currentIndex; // 이전 행의 개수에 1을 더함
+            row.appendChild(cellIndex);
+
+            // 상품명 열
+            var cellName = document.createElement('td');
+            cellName.className = 'product-name';
+            cellName.innerText = response.productName;
+            row.appendChild(cellName);
+
+            // 가격 열
+            var priceElementId = 'orderPrice_' + response.id;
+            var priceElement = document.getElementById(priceElementId);
+            var price = priceElement ? priceElement.innerText : response.price;
+            var cellPrice = document.createElement('td');
+            cellPrice.className = 'product-price';
+            cellPrice.innerText = price;
+            row.appendChild(cellPrice);
+
+            // - 버튼 열
+            var cellQuantity = document.createElement('td');
+            var decreaseButton = document.createElement('button');
+            decreaseButton.className = 'btn btn-xs btn-outline btn-error';
+            decreaseButton.innerText = '-';
+            decreaseButton.setAttribute('data-index', currentIndex);
+            decreaseButton.onclick = function () { decreaseQuantity(this); };
+            cellQuantity.appendChild(decreaseButton);
+
+            // 수량 표시 열
+            var quantitySpan = document.createElement('span');
+            quantitySpan.id = 'quantity_' + currentIndex;
+            quantitySpan.className = 'product-quantity';
+            quantitySpan.innerText = 1;
+            cellQuantity.appendChild(quantitySpan);
+
+            // + 버튼 열
+            var increaseButton = document.createElement('button');
+            increaseButton.className = 'btn btn-xs btn-outline btn-success';
+            increaseButton.innerText = '+';
+            increaseButton.setAttribute('data-index', currentIndex);
+            increaseButton.onclick = function () { increaseQuantity(this); };
+            cellQuantity.appendChild(increaseButton);
+            row.appendChild(cellQuantity);
+
+            // 금액 열
+            var cellTotalPrice = document.createElement('td');
+            cellTotalPrice.id = 'totalPricePerProduct_' + currentIndex;
+            cellTotalPrice.className = 'totalPricePerProduct';
+            cellTotalPrice.innerText = price;
+            row.appendChild(cellTotalPrice);
+
+            // 생성된 행을 테이블에 추가
+            productListElement.appendChild(row);
+
+            const item = {
+                id: currentIndex,
+                productName: response.productName,
+                price : price
+            };
+
+            return item;
+        }
+
+        function saveSelectListToSession(item) {
+            // 세션 스토리지에 selectList 저장
+            selectList.push(item);
+            sessionStorage.setItem('selectList', JSON.stringify(selectList));
+            console.log('selectList saved to session successfully');
+        }
+
+
+        // -버튼 클릭 시
+        function decreaseQuantity(element) {
+            var selectIndex = element.dataset.index;
+            var quantityElement = document.getElementById('quantity_' + selectIndex);
+            var currentQuantity = parseInt(quantityElement.innerText);
+
+            if (currentQuantity > 0) {
+                currentQuantity -= 1; // 현재 수량에서 1을 빼기
+                quantityElement.innerText = currentQuantity; // 업데이트된 수량을 화면에 표시
+
+                if (currentQuantity === 0) {
+                    removeFromCart(selectIndex); // 수량이 0이 되면 장바구니에서 제거
+                } else {
+                    update(selectIndex);
+                }
+            }
+        }
+
+        function removeFromCart(selectIndex) {
+            // 해당 품목을 selectList에서 제거
+            selectList = selectList.filter(function(item) {
+                return item.id !== parseInt(selectIndex);
+            });
+            // 장바구니에서 해당 품목 삭제
+            var productRow = document.querySelector('.product-row:nth-child(' + selectIndex + ')');
+            productRow.parentNode.removeChild(productRow);
+
+            // 변경된 장바구니 정보를 세션에 저장
+            sessionStorage.setItem('selectList', JSON.stringify(selectList));
+
+            calculateTotalPrice(); // 총 상품 가격 다시 계산
+        }
+
+        // +버튼 클릭 시
+        function increaseQuantity(element) {
+            var selectIndex = element.dataset.index;
+            var quantityElement = document.getElementById('quantity_' + selectIndex);
+            var currentQuantity = parseInt(quantityElement.innerText);
+
+            currentQuantity += 1; // 현재 수량에 1을 더하기
+            quantityElement.innerText = currentQuantity; // 업데이트된 수량을 화면에 표시
+            update(selectIndex);
+        }
+
+        function update(selectIndex) { //totalPricePerProduct
+            var priceElement = document.querySelector('.product-row:nth-child(' + selectIndex + ') .product-price');
+            var quantityElement = document.getElementById('quantity_' + selectIndex);
+
+            var price = parseInt(priceElement.innerText.replace(",", "").replace("원", ""));
+            var quantity = parseInt(quantityElement.innerText);
+
+            var totalPricePerProduct = price * quantity;
+
+            var targetId = 'totalPricePerProduct_' + selectIndex;
+            console.log(targetId);
+            var targetElement = document.getElementById(targetId);
+            var formattedtotalPricePerProduct = totalPricePerProduct.toLocaleString(); // 콤마를 포함한 형식으로 변환
+            console.log(formattedtotalPricePerProduct);
+            targetElement.innerText = formattedtotalPricePerProduct + "원";
+
+            calculateTotalPrice();
+        }
+
+        function calculateTotalPrice() { //totalPrice
+            var totalPrice = 0;
+            var productRows = document.querySelectorAll(".product-row");
+            productRows.forEach(function (row) {
+                var totalPricePerProductText = row.querySelector(".totalPricePerProduct").innerText;
+                // "원" 문자열 제거 후 숫자만 추출
+                var totalPricePerProduct = parseInt(totalPricePerProductText.replace("원", "").replace(",", "")) || 0;
+                totalPrice += totalPricePerProduct;
+            });
+            var formattedPrice = totalPrice.toLocaleString(); // 콤마를 포함한 형식으로 변환
+            document.getElementById("totalPrice").innerText = formattedPrice + "원";
+        }
+
+        document.querySelectorAll("[id^='add-item_']").forEach(function (elem) {
+            elem.addEventListener("click", function (e) {
+                e.preventDefault();
+                const pid = e.target.dataset.pid;
+                const priceText = document.getElementById('orderPrice_' + pid).innerText;
+                const price = parseInt(priceText.replace(/[^0-9]/g, ''), 10); // 숫자만 추출하여 정수로 변환
+                console.log(price);
+                location.href = `/item/select/${pid}?orderPrice=${price}`;
+            });
+        });
+
+        ///////////////////////////////////////////////////담기 모달//////////////////////////////////////////////////////
+        function openModal(productId) {
+            var modal = document.getElementById('my_modal_' + productId);
+            modal.showModal();
+            calculateOrderPrice(productId); // 모달을 열 때 주문 가격 계산
+        }
+
+        function closeModal(productId) {
+            var modal = document.getElementById('my_modal_' + productId);
+            modal.close();
+        }
+
+        /////////////////////////////////////////////////////결제////////////////////////////////////////////////////////
+        document.getElementById("payButton").addEventListener("click", function (event) {
+            // totalPrice를 가져와서 콤마를 제거하고 숫자로 변환
+            var totalPriceString = document.getElementById("totalPrice").innerText;
+            var totalPriceNumber = parseInt(totalPriceString.replace(/,/g, ''), 10);
+
+            IMP.init('imp07531670'); // 아임포트에서 발급받은 가맹점 식별코드로 초기화합니다.
+
+            event.preventDefault(); // 기본 동작(폼 전송)을 중지
+
+            // 결제 요청 정보 설정
+            var payReq = {
+                pg: 'html5_inicis',
+                pay_method: 'card',
+                merchant_uid: 'merchant_' + new Date().getTime(),
+                name: '주문명:Ziosk',
+                amount: totalPriceNumber,
+                buyer_postcode: '',
+                m_redirect_url: 'http://localhost:8088/product/success' // 모바일에서 결제 완료 후 리디렉션 될 URL
+            };
+
+            // 결제 요청 수행
+            IMP.request_pay(payReq, function (response) {
+                if (response.success) {
+                    console.log(response);
+                    window.location.href = payReq.m_redirect_url;
+                } else {
+                    alert('결제실패 : ' + response.error_msg);
+                    // 결제 실패 시 추가적인 처리를 수행
+                }
+            });
+        });
+    </script>
+</div>
 </body>
 </html>

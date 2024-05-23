@@ -185,17 +185,17 @@ public class ProductController {
         if (selectList != null && !selectList.isEmpty()){
             selectList.clear(); // 리스트 내의 모든 항목을 지움
         }
-        List<Product> productList = productService.getList();
-
-        for (Product product : productList){
-            List<Item> itemList = itemService.getList(product);
-            for (Item item : itemList){
-                item.setQuantity(0);
-                this.itemService.updateItem(item);
-            }
-            product.setTotal(0);
-            this.productService.updateProduct(product);
-        }
+//        List<Product> productList = productService.getList();
+//
+//        for (Product product : productList){
+//            List<Item> itemList = itemService.getList(product);
+//            for (Item item : itemList){
+//                item.setQuantity(0);
+//                this.itemService.updateItem(item);
+//            }
+//            product.setTotal(0);
+//            this.productService.updateProduct(product);
+//        }
 
         return "redirect:/product/list";
     }
