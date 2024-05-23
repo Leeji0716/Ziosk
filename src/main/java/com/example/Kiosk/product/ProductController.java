@@ -33,7 +33,6 @@ public class ProductController {
 
     @GetMapping("/list")
     public String list(Model model, @RequestParam(value = "categoryId", defaultValue = "0") int categoryId){
-        System.out.println(categoryId);
         List<Category> categoryList = categoryService.getList();
         List<Product> productList = new ArrayList<>();
 
@@ -50,49 +49,8 @@ public class ProductController {
         model.addAttribute("categoryList", categoryList);
         model.addAttribute("productList", productList);
         model.addAttribute("categoryId", categoryId);
-
-
-
         return "product_list";
     }
-//
-//    @GetMapping("/listAjax")
-//    @ResponseBody
-//    public List<Product> getProductListByCategory(
-//            @RequestParam(value = "categoryId", defaultValue = "0") int categoryId) {
-//        System.out.println("categoryId: " + categoryId);
-//
-//        // 카테고리별로 필터링된 제품 목록을 가져오는 서비스 메소드를 호출합니다.
-//        List<Product> filteredProductList = productService.getCategoryList(categoryId);
-//        for (Product product : filteredProductList){
-//            System.out.println(product.getProductName());
-//        }
-//        return filteredProductList;
-//    }
-
-//    @GetMapping("/list")
-//    @ResponseBody
-//    public List<Product> list(@RequestParam(value = "categoryId", defaultValue = "0") int categoryId){
-//        List<Product> productList;
-//        if (categoryId == 0) {
-//            productList = productService.getList();
-//        } else {
-//            productList = productService.getCategoryList(categoryId);
-//        }
-//        return productList;
-//    }
-
-//    @PostMapping("/list")
-//    public String listAjax(Model model, @RequestParam(value = "categoryId", defaultValue = "0") int categoryId){
-//        List<Product> productList;
-//        if (categoryId == 0) {
-//            productList = productService.getList();
-//        } else {
-//            productList = productService.getCategoryList(categoryId);
-//        }
-//        model.addAttribute("productList", productList);
-//        return "product_list :: productListFragment"; // productList의 일부분인 템플릿을 반환
-//    }
 
     @GetMapping("/create")
     public String ProductCreate(ProductForm productForm, ItemForm itemForm, Model model){
@@ -183,27 +141,6 @@ public class ProductController {
         model.addAttribute("itemList", product.getItemList());
 
         return "product_detail";
-    }
-
-    @GetMapping("/reset")
-    public String cartReset(HttpSession session){
-        List<Object> selectList = (List<Object>) session.getAttribute("selectList");
-        if (selectList != null && !selectList.isEmpty()){
-            selectList.clear(); // 리스트 내의 모든 항목을 지움
-        }
-//        List<Product> productList = productService.getList();
-//
-//        for (Product product : productList){
-//            List<Item> itemList = itemService.getList(product);
-//            for (Item item : itemList){
-//                item.setQuantity(0);
-//                this.itemService.updateItem(item);
-//            }
-//            product.setTotal(0);
-//            this.productService.updateProduct(product);
-//        }
-
-        return "redirect:/product/list";
     }
 
     @GetMapping("/success")

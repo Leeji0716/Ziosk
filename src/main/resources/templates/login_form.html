@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <title>로그인</title>
+    <meta name="_csrf" th:content="${_csrf.token}" />
+    <meta name="_csrf_header" th:content="${_csrf.headerName}" />
 </head>
 <body>
 <div layout:fragment="content" class="my-3">
@@ -46,6 +48,7 @@
     $(document).ready(function() {
         var csrfToken = $("meta[name='_csrf']").attr("content");
         var csrfHeader = $("meta[name='_csrf_header']").attr("content");
+        console.log(csrfToken);
 
         function sendAjaxRequest(url, data, successCallback) {
             $.ajax({
@@ -54,7 +57,7 @@
                 contentType: 'application/x-www-form-urlencoded', // 폼 데이터 형식으로 설정
                 data: data, // 직렬화된 폼 데이터 전송
                 beforeSend: function(xhr) {
-                    xhr.setRequestHeader(csrfHeader, csrfToken); // CSRF 토큰을 요청 헤더에 포함
+                    xhr.setRequestHeader('X-CSRF-TOKEN', csrfToken); // CSRF 토큰을 요청 헤더에 포함
                 },
                 success: successCallback,
                 error: function(xhr, status, error) {

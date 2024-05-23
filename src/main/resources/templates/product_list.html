@@ -10,11 +10,9 @@
 <body>
     <div layout:fragment="content" class="col-6 h-[90vh]">
         <div class="row my-3 h-[5%]">
-            <div class="col-6">
+            <div class="navbar bg-base-100">
                 <a th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{|/product/create|}"
                     class="btn btn-primary">제품 등록하기</a>
-            </div>
-            <div class="navbar bg-base-100">
                 <div class="flex-1 justify-center">
                     <a class="btn btn-ghost text-xs" th:href="@{|/product/list|}">전체</a>
                     <div th:each="category : ${categoryList}">

@@ -9,7 +9,7 @@
 <div layout:fragment="content">
     <div class="flex flex-col items-center justify-center">
         <div class="mb-4">
-            <a class="artboard artboard-horizontal phone-2 btn btn-accent text-3xl" th:href="@{/product/reset}" onclick="resetCart()">주문하기</a>
+            <a class="artboard artboard-horizontal phone-2 btn btn-accent text-3xl" th:href="@{/product/list}" onclick="resetCart()">주문하기</a>
         </div>
         <div>
             <a class="btn btn-ghost text-lg" sec:authorize="isAnonymous()" th:href="@{/user/login}">관리자</a>
