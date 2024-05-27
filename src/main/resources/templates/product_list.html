@@ -9,10 +9,11 @@
 
 <body>
     <div layout:fragment="content" class="col-6 h-[90vh]">
-        <div class="row my-3 h-[5%]">
+        <div class="row my-3 h-[10%]">
             <div class="navbar bg-base-100">
                 <a th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{|/product/create|}"
                     class="btn btn-primary">제품 등록하기</a>
+                <a href="#">zzz</a>
                 <div class="flex-1 justify-center">
                     <a class="btn btn-ghost text-xs" th:href="@{|/product/list|}">전체</a>
                     <div th:each="category : ${categoryList}">
@@ -24,7 +25,7 @@
                     class="btn btn-primary">카테고리 추가</a>
             </div>
         </div>
-        <div class="row flex justify-around flex-wrap overflow-y-auto h-[60%]">
+        <div class="row flex justify-around flex-wrap overflow-y-auto h-[45%]">
             <div th:each="product : ${productList}" class="col-4">
                 <a th:id="|product_${product.id}|"></a>
                 <div class="card w-96 bg-base-100 shadow-xl">
@@ -235,6 +236,31 @@
                 getProductById(productId); // 잘됨
             }
 
+            function resetItemQuantities(productId) {
+                var itemQuantityElements = document.querySelectorAll(".item-quantity");
+                itemQuantityElements.forEach(function(element) {
+                    element.innerText = '0';
+                });
+
+                // 각 항목의 ID를 가져와서 updateItem 함수 호출
+                var itemRows = document.querySelectorAll(".item-row");
+                itemRows.forEach(function(row) {
+                    var itemId = row.querySelector(".item-quantity").getAttribute("id").replace("itemQuantity_", "");
+                    updateItem(itemId, productId);
+                });
+            }
+
+            // productId로 product를 찾고 itemList를 반환하는 함수
+            function getProductItemList(productId) {
+                // productId와 일치하는 제품을 찾습니다.
+                var product = products.find(function(product) {
+                    return product.id === productId;
+                });
+                console.log('product : ' + product);
+                // 해당 제품이 존재하면 itemList를 반환하고, 없으면 빈 배열을 반환합니다.
+                return product ? product.itemList : [];
+            }
+
             function getProductById(productId) {
                 $.ajax({
                     url: '/product/getProduct', // 서버에서 제품 정보를 조회하는 컨트롤러의 URL
@@ -246,7 +272,8 @@
                         const item = renderSelectList(response);
                         saveSelectListToSession(item);
 
-                        calculateTotalPrice(); // 총금액 업데이트-> 의심
+                        calculateTotalPrice(); // 총금액 업데이트
+                        resetItemQuantities(productId);
                         closeModal(productId); // 잘됨
                     },
                     error: function (xhr, status, error) {
