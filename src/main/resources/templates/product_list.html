@@ -6,14 +6,12 @@
     <meta charset="UTF-8">
     <title>주문 목록</title>
 </head>
-
 <body>
     <div layout:fragment="content" class="col-6 h-[90vh]">
         <div class="row my-3 h-[10%]">
             <div class="navbar bg-base-100">
                 <a th:if="${#authorization.expression('isAuthenticated()')}" th:href="@{|/product/create|}"
                     class="btn btn-primary">제품 등록하기</a>
-                <a href="#">zzz</a>
                 <div class="flex-1 justify-center">
                     <a class="btn btn-ghost text-xs" th:href="@{|/product/list|}">전체</a>
                     <div th:each="category : ${categoryList}">
