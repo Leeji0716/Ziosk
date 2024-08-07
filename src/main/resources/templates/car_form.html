@@ -6,7 +6,7 @@
     <title>자동차 등록</title>
 </head>
 <body>
-<div layout:fragment="content" class="container">
+<div layout:fragment="content" class="flex flex-col justify-center items-center ">
     <form th:object="${carForm}" method="post">
         <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
         <div th:replace="~{form_errors :: formErrorsFragment}"></div>

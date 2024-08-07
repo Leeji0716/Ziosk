@@ -23,7 +23,7 @@
                     class="btn btn-primary">카테고리 추가</a>
             </div>
         </div>
-        <div class="row flex justify-around flex-wrap overflow-y-auto h-[45%]">
+        <div class="flex justify-center flex-wrap overflow-y-auto h-[45%]">
             <div th:each="product : ${productList}" class="col-4">
                 <a th:id="|product_${product.id}|"></a>
                 <div class="card w-96 bg-base-100 shadow-xl">

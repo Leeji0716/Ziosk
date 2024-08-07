@@ -8,7 +8,7 @@
 </head>
 
 <body>
-    <div layout:fragment="content" class="container">
+    <div layout:fragment="content" class="flex flex-col justify-center items-center w-full">
         <form th:object="${productForm}" method="post">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
             <!-- <div th:replace="~{form_errors :: formErrorsFragment}"></div> -->
@@ -80,7 +80,7 @@
         <form th:if="${id != null}" th:object="${itemForm}" method="post" th:action="@{|/item/create/${id}|}">
             <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
             <div th:replace="~{form_errors :: formErrorsFragment}"></div>
-            <div class="flex justify-center items-center">                   
+            <div class="flex justify-center items-center w-[700px]">                   
                 <input type="text" th:field="*{content}" placeholder="추가사항을 입력해주세요." id="content"
                     class="input input-bordered w-full max-w-xs" />
                 <input type="number" th:field="*{itemPrice}" placeholder="추가금액을 입력해주세요." id="itemPrice"
