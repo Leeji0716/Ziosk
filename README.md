@@ -57,3 +57,20 @@
 - 최종 금액 계산 및 결제 (결제 API 사용)
 
 ---
+
+홈 페이지
+![](https://i.imgur.com/msswQPm.png)
+
+주문 페이지
+![](https://i.imgur.com/dph8rQI.png)
+
+결제 페이지
+![](https://i.imgur.com/WKVUCLd.png)
+
+주차 정산 페이지
+![](https://i.imgur.com/rooe6Xz.png)
+
+
+
+
+
